@@ -17,11 +17,18 @@ export class LoginUserRdo {
   public email: string;
 
   @ApiProperty({
-    description: 'User name',
-    example: 'John Doe',
+    description: 'User first name',
+    example: 'John',
   })
   @Expose()
-  public name: string;
+  public firstName: string;
+
+  @ApiProperty({
+    description: 'User last name',
+    example: 'Doe',
+  })
+  @Expose()
+  public lastName: string;
 
   @ApiProperty({
     description: 'User avatar',

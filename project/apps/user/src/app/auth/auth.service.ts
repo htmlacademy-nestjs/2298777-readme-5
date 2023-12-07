@@ -15,11 +15,12 @@ export class AuthService {
   constructor(private readonly userRepository: UserRepository) {}
 
   public async register(dto: CreateUserDto) {
-    const { email, password, name } = dto;
+    const { email, password, firstName, lastName } = dto;
 
     const user: AuthUser = {
       email,
-      name,
+      firstName,
+      lastName,
       avatar: '',
       registerDate: new Date(),
       publicationsCount: 0,

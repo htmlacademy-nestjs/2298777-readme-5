@@ -4,7 +4,8 @@ Content-Type: application/json
 {
   "email": "bogda@gmail.com",
   "password": "123456fsdf",
-  "name": "bogna"
+  "firstName": "bogna",
+  "lastName": "bogna"
 }
 
 ###
@@ -19,4 +20,4 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3000/api/auth/c169f78b-e9ed-4da8-a688-79a6590df3dc HTTP/1.1
+GET http://localhost:3000/api/auth/19234fcc-7907-483e-b1c5-f7bf58cf69a6 HTTP/1.1
