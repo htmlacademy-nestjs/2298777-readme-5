@@ -8,6 +8,6 @@ export interface User {
   subscribersCount: number;
 }
 
-export interface AuthData extends User {
+export interface AuthUser extends User {
   passwordHash: string;
 }

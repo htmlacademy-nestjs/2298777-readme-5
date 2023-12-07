@@ -1,0 +1,22 @@
+POST http://localhost:3000/api/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "bogda@gmail.com",
+  "password": "123456fsdf",
+  "name": "bogna"
+}
+
+###
+
+POST http://localhost:3000/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "bogda@gmail.com",
+  "password": "123456fsdf"
+}
+
+###
+
+GET http://localhost:3000/api/auth/c169f78b-e9ed-4da8-a688-79a6590df3dc HTTP/1.1
