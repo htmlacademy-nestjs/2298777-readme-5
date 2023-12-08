@@ -24,3 +24,7 @@ export function fillDto<T, V extends PlainObject>(
     ...options,
   });
 }
+
+export const sortDate = (a: Date, b: Date) => {
+  return b.getTime() - a.getTime();
+};
