@@ -28,7 +28,6 @@ export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
   @ApiResponse({
-    type: PostRdo,
     status: HttpStatus.OK,
     description: 'Posts have been successfully fetched',
   })
@@ -94,7 +93,6 @@ export class BlogController {
   public async createLink(@Body() post: LinkPostDto) {
     post.type = 'link';
     const newPost = await this.blogService.createPost(post);
-    console.log(newPost);
     return fillDto(PostRdo, newPost.toPojo());
   }
 
