@@ -10,16 +10,9 @@ import {
   TextPostEntity,
   LinkPostEntity,
 } from '../post/entities';
-import { VideoPostDto, TextPostDto, QuotePostDto, ImagePostDto, LinkPostDto } from './dto';
-import { PostStatus } from '@project/shared/types';
-
-type PostEntity =
-  | VideoPostEntity
-  | TextPostEntity
-  | QuotePostEntity
-  | ImagePostEntity
-  | LinkPostEntity;
-
+import { UpdatePostDto } from './dto';
+import { defaultCreateValues } from './default-create-values';
+import type { PostDto, PostEntity, PostEntityForDto } from './blog.types';
 @Injectable()
 export class BlogService {
   constructor(
@@ -31,95 +24,28 @@ export class BlogService {
     let result: PostEntity[];
     switch (filterOption) {
       case filterOptions.Like:
+        console.log('like');
         result = (await this.postRepository.getPosts()).sort(
-          (post1, post2) => post1.likesCount - post2.likesCount
+          (post1, post2) => post2.likesCount - post1.likesCount
         );
+        break;
       case filterOptions.Popular:
         result = (await this.postRepository.getPosts()).sort(
-          (post1, post2) => post1.commentsCount - post2.commentsCount
+          (post1, post2) => post2.commentsCount - post1.commentsCount
         );
+        break;
       default:
         result = (await this.postRepository.getPosts()).sort((post1, post2) =>
           sortDate(post1.createDate, post2.createDate)
         );
+        break;
     }
-    const mappedResult = result.slice(0, quantity).map(async (post) => {
-      const likes = await this.likeRepository.countLikes(post.id!);
-      post.setLikesCount(likes);
-      return post;
-    });
-    result = await Promise.all(mappedResult);
-    return result;
+    return result.slice(0, quantity);
   }
 
-  public async createVideo(post: VideoPostDto) {
-    const postEntity = new VideoPostEntity({
-      name: post.name,
-      tags: post.tags,
-      videoUrl: post.videoUrl,
-      authorId: post.authorId,
-      status: PostStatus.Draft,
-      createDate: new Date(),
-      likesCount: 0,
-      commentsCount: 0,
-    });
-    return this.postRepository.save(postEntity);
-  }
-
-  public async createText(post: TextPostDto) {
-    const postEntity = new TextPostEntity({
-      name: post.name,
-      anonsText: post.anonsText,
-      tags: post.tags,
-      text: post.text,
-      authorId: post.authorId,
-      status: PostStatus.Draft,
-      createDate: new Date(),
-      likesCount: 0,
-      commentsCount: 0,
-    });
-    return this.postRepository.save(postEntity);
-  }
-
-  public async createQuote(post: QuotePostDto) {
-    const postEntity = new QuotePostEntity({
-      quote: post.quote,
-      quoteAuthor: post.quoteAuthor,
-      tags: post.tags,
-      authorId: post.authorId,
-      status: PostStatus.Draft,
-      createDate: new Date(),
-      likesCount: 0,
-      commentsCount: 0,
-    });
-    return this.postRepository.save(postEntity);
-  }
-
-  public async createImage(post: ImagePostDto) {
-    const postEntity = new ImagePostEntity({
-      imageUrl: post.imageUrl,
-      tags: post.tags,
-      authorId: post.authorId,
-      status: PostStatus.Draft,
-      createDate: new Date(),
-      likesCount: 0,
-      commentsCount: 0,
-    });
-    return this.postRepository.save(postEntity);
-  }
-
-  public async createLink(post: LinkPostDto) {
-    const postEntity = new LinkPostEntity({
-      linkUrl: post.linkUrl,
-      description: post.description,
-      tags: post.tags,
-      authorId: post.authorId,
-      status: PostStatus.Draft,
-      createDate: new Date(),
-      likesCount: 0,
-      commentsCount: 0,
-    });
-    return this.postRepository.save(postEntity);
+  public async createPost<T extends PostDto>(post: T): Promise<PostEntityForDto<T>> {
+    const postEntity = this.createPostEntity(post);
+    return this.postRepository.save(postEntity) as Promise<PostEntityForDto<T>>;
   }
 
   public async likeHandle(postId: string, userId: string) {
@@ -142,8 +68,55 @@ export class BlogService {
     if (!post) {
       throw new BadRequestException('Post not found');
     }
-    const likes = await this.likeRepository.countLikes(post.id!);
-    post.setLikesCount(likes);
     return post;
+  }
+
+  public async deletePost(id: string) {
+    if (!(await this.postRepository.findById(id))) {
+      throw new BadRequestException('Post not found');
+    }
+    await this.postRepository.deleteById(id);
+    return;
+  }
+
+  public async updatePost(id: string, updatedPost: UpdatePostDto) {
+    const post = await this.postRepository.findById(id);
+    if (!post) {
+      throw new BadRequestException('Post not found');
+    }
+    post.update(updatedPost);
+    return post;
+  }
+
+  private createPostEntity<T extends PostDto>(post: T): PostEntityForDto<T> {
+    switch (post.type) {
+      case 'video':
+        return new VideoPostEntity({
+          ...defaultCreateValues,
+          ...post,
+        }) as PostEntityForDto<T>;
+      case 'text':
+        return new TextPostEntity({
+          ...defaultCreateValues,
+          ...post,
+        }) as PostEntityForDto<T>;
+      case 'quote':
+        return new QuotePostEntity({
+          ...defaultCreateValues,
+          ...post,
+        }) as PostEntityForDto<T>;
+      case 'image':
+        return new ImagePostEntity({
+          ...defaultCreateValues,
+          ...post,
+        }) as PostEntityForDto<T>;
+      case 'link':
+        return new LinkPostEntity({
+          ...defaultCreateValues,
+          ...post,
+        }) as PostEntityForDto<T>;
+      default:
+        throw new Error('Post type not found');
+    }
   }
 }

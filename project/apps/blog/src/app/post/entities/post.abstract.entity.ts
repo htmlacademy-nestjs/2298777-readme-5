@@ -48,4 +48,10 @@ export abstract class BasePostEntity implements Post, Entity<string> {
   public setCommentsCount(count: number) {
     this.commentsCount = count;
   }
+
+  public update(updatePost: { tags?: string[]; status?: PostStatus }) {
+    const { tags, status } = updatePost;
+    status && (this.status = status);
+    tags && (this.tags = tags);
+  }
 }

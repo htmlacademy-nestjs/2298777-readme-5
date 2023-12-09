@@ -1,4 +1,4 @@
-GET http://localhost:3001/api/blog HTTP/1.1
+GET http://localhost:3001/api/blog/?filter=like HTTP/1.1
 
 ###
 
@@ -62,8 +62,21 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:3001/api/blog/like/c3de306b-1d61-47f7-8e04-a9656ba336b0 HTTP/1.1
+POST http://localhost:3001/api/blog/like/6da8cf63-6bfc-44ee-b7ac-38594127983d HTTP/1.1
 
 ###
 
-GET http://localhost:3001/api/blog/c3de306b-1d61-47f7-8e04-a9656ba336b0 HTTP/1.1
+GET http://localhost:3001/api/blog/6da8cf63-6bfc-44ee-b7ac-38594127983d HTTP/1.1
+
+###
+
+DELETE http://localhost:3001/api/blog/6da8cf63-6bfc-44ee-b7ac-38594127983d HTTP/1.1
+
+###
+
+PATCH http://localhost:3001/api/blog/6da8cf63-6bfc-44ee-b7ac-38594127983d HTTP/1.1
+Content-Type: application/json
+
+{
+    "linkUrl": "l"
+}
