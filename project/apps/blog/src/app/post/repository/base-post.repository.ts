@@ -1,4 +1,4 @@
-import { BaseRepository, Entity } from '@project/shared/core';
+import { BaseRepository } from '@project/shared/core';
 import { PostEntity } from '../../blog/blog.types';
 
 export abstract class BasePostRepository<T extends PostEntity> extends BaseRepository<T> {
