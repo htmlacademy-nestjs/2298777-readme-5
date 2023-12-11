@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { PostType } from '@project/shared/types';
 
 export class LinkPostDto {
   @ApiProperty({
@@ -29,5 +30,5 @@ export class LinkPostDto {
   })
   public authorId: string;
 
-  public type: 'link' = 'link';
+  public type: PostType = PostType.Link;
 }

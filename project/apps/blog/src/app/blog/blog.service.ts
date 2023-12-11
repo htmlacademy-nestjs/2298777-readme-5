@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PostRepository } from '../post/post.repository';
+import { PostRepositoryService } from '../post/post.repository.service';
 import { LikeRepository } from '../like/like.repository';
 import { filterOptions } from './filter-option.enum';
 import { sortDate } from '@project/shared/utils';
@@ -13,18 +13,20 @@ import {
 import { UpdatePostDto } from './dto';
 import { defaultCreateValues } from './default-create-values';
 import type { PostDto, PostEntity, PostEntityForDto } from './blog.types';
+import { PostType } from '@project/shared/types';
 @Injectable()
 export class BlogService {
   constructor(
-    private readonly postRepository: PostRepository,
+    private readonly postRepository: PostRepositoryService,
     private readonly likeRepository: LikeRepository
   ) {}
 
-  public async filter(filterOption: filterOptions, quantity?: number) {
+  public async filter(filterOption: filterOptions, quantity: number, next: number) {
+    const start = next * quantity;
+    const end = start + quantity;
     let result: PostEntity[];
     switch (filterOption) {
       case filterOptions.Like:
-        console.log('like');
         result = (await this.postRepository.getPosts()).sort(
           (post1, post2) => post2.likesCount - post1.likesCount
         );
@@ -36,16 +38,16 @@ export class BlogService {
         break;
       default:
         result = (await this.postRepository.getPosts()).sort((post1, post2) =>
-          sortDate(post1.createDate, post2.createDate)
+          sortDate(post2.createDate!, post1.createDate!)
         );
         break;
     }
-    return result.slice(0, quantity);
+    return result.slice(start, end);
   }
 
   public async createPost<T extends PostDto>(post: T): Promise<PostEntityForDto<T>> {
     const postEntity = this.createPostEntity(post);
-    return this.postRepository.save(postEntity) as Promise<PostEntityForDto<T>>;
+    return this.postRepository.save(postEntity, post.type) as Promise<PostEntityForDto<T>>;
   }
 
   public async likeHandle(postId: string, userId: string) {
@@ -72,10 +74,12 @@ export class BlogService {
   }
 
   public async deletePost(id: string) {
-    if (!(await this.postRepository.findById(id))) {
+    const post = await this.postRepository.findById(id);
+    console.log(post);
+    if (!post) {
       throw new BadRequestException('Post not found');
     }
-    await this.postRepository.deleteById(id);
+    await this.postRepository.deleteById(id, post.type);
     return;
   }
 
@@ -90,30 +94,30 @@ export class BlogService {
 
   private createPostEntity<T extends PostDto>(post: T): PostEntityForDto<T> {
     switch (post.type) {
-      case 'video':
+      case PostType.Video:
         return new VideoPostEntity({
           ...defaultCreateValues,
-          ...post,
+          ...(post as VideoPostEntity),
         }) as PostEntityForDto<T>;
-      case 'text':
+      case PostType.Text:
         return new TextPostEntity({
           ...defaultCreateValues,
-          ...post,
+          ...(post as TextPostEntity),
         }) as PostEntityForDto<T>;
-      case 'quote':
+      case PostType.Quote:
         return new QuotePostEntity({
           ...defaultCreateValues,
-          ...post,
+          ...(post as QuotePostEntity),
         }) as PostEntityForDto<T>;
-      case 'image':
+      case PostType.Image:
         return new ImagePostEntity({
           ...defaultCreateValues,
-          ...post,
+          ...(post as ImagePostEntity),
         }) as PostEntityForDto<T>;
-      case 'link':
+      case PostType.Link:
         return new LinkPostEntity({
           ...defaultCreateValues,
-          ...post,
+          ...(post as LinkPostEntity),
         }) as PostEntityForDto<T>;
       default:
         throw new Error('Post type not found');

@@ -26,5 +26,5 @@ export function fillDto<T, V extends PlainObject>(
 }
 
 export const sortDate = (a: Date, b: Date) => {
-  return b.getTime() - a.getTime();
+  return a.getTime() - b.getTime();
 };

@@ -1,8 +1,22 @@
 import { Module } from '@nestjs/common';
-import { PostRepository } from './post.repository';
+import { PostRepositoryService } from './post.repository.service';
+import {
+  ImagePostRepository,
+  LinkPostRepository,
+  QuotePostRepository,
+  TextPostRepository,
+  VideoPostRepository,
+} from './repository';
 
 @Module({
-  exports: [PostRepository],
-  providers: [PostRepository],
+  exports: [PostRepositoryService],
+  providers: [
+    PostRepositoryService,
+    ImagePostRepository,
+    LinkPostRepository,
+    VideoPostRepository,
+    QuotePostRepository,
+    TextPostRepository,
+  ],
 })
 export class PostModule {}

@@ -29,7 +29,6 @@ export class CommentController {
   @Post()
   public async createComment(@Body() comment: CreateCommentDto) {
     const newComment = await this.commentService.createComment(comment);
-    console.log(newComment);
     return fillDto(CommentRdo, newComment.toPojo());
   }
 

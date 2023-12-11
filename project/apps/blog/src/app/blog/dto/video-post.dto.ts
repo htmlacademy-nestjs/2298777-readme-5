@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { PostType } from '@project/shared/types';
 
 export class VideoPostDto {
   @ApiProperty({
@@ -29,5 +30,5 @@ export class VideoPostDto {
   })
   public authorId: string;
 
-  public type: 'video' = 'video';
+  public type: PostType = PostType.Video;
 }

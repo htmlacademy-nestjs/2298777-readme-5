@@ -1,16 +1,18 @@
+import { PostType } from './post-type.enum';
 import { PostStatus } from './post.enum';
 
 export interface Post {
   id?: string;
   tags?: string[];
   authorId: string;
-  createDate: Date;
+  createDate?: Date;
   publishDate?: Date;
   status: PostStatus;
   originalAuthorId?: string;
   originalPostId?: string;
   likesCount: number;
   commentsCount: number;
+  type: PostType;
 }
 
 export interface VideoPost extends Post {

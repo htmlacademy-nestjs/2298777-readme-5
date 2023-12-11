@@ -62,19 +62,19 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:3001/api/blog/like/6da8cf63-6bfc-44ee-b7ac-38594127983d HTTP/1.1
+POST http://localhost:3001/api/blog/like/171e7bed-3df9-468f-831d-b13cf5cf1d71 HTTP/1.1
 
 ###
 
-GET http://localhost:3001/api/blog/6da8cf63-6bfc-44ee-b7ac-38594127983d HTTP/1.1
+GET http://localhost:3001/api/blog/e82d4f63-3a8d-4d2f-ab96-5380cbae48a8 HTTP/1.1
 
 ###
 
-DELETE http://localhost:3001/api/blog/6da8cf63-6bfc-44ee-b7ac-38594127983d HTTP/1.1
+DELETE http://localhost:3001/api/blog/e82d4f63-3a8d-4d2f-ab96-5380cbae48a8 HTTP/1.1
 
 ###
 
-PATCH http://localhost:3001/api/blog/6da8cf63-6bfc-44ee-b7ac-38594127983d HTTP/1.1
+PATCH http://localhost:3001/api/blog/6b02f3b9-8765-4683-8964-27e61dcbc280 HTTP/1.1
 Content-Type: application/json
 
 {

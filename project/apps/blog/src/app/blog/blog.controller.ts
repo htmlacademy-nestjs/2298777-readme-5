@@ -22,6 +22,8 @@ import {
 } from './dto';
 import { PostRdo } from './rdo/post.rdo';
 import { ApiResponse } from '@nestjs/swagger';
+import { PostType } from '@project/shared/types';
+import { DEFAULT_FETCHED_POSTS } from './blog.const';
 
 @Controller('blog')
 export class BlogController {
@@ -32,9 +34,13 @@ export class BlogController {
     description: 'Posts have been successfully fetched',
   })
   @Get()
-  public async filter(@Query() query: { filter: filterOptions; quantity: number }) {
-    const { filter, quantity } = query;
-    const result = await this.blogService.filter(filter, quantity);
+  public async filter(@Query() query: { filter: filterOptions; quantity?: number; next?: number }) {
+    const { filter, quantity, next } = query;
+    const result = await this.blogService.filter(
+      filter,
+      quantity ?? DEFAULT_FETCHED_POSTS,
+      next ?? 0
+    );
     return fillDto(
       PostRdo,
       result.map((post) => post.toPojo())
@@ -47,7 +53,7 @@ export class BlogController {
   })
   @Post('video')
   public async createVideo(@Body() post: VideoPostDto) {
-    post.type = 'video';
+    post.type = PostType.Video;
     const newPost = await this.blogService.createPost(post);
     return fillDto(PostRdo, newPost.toPojo());
   }
@@ -58,7 +64,7 @@ export class BlogController {
   })
   @Post('text')
   public async createText(@Body() post: TextPostDto) {
-    post.type = 'text';
+    post.type = PostType.Text;
     const newPost = await this.blogService.createPost(post);
     return fillDto(PostRdo, newPost.toPojo());
   }
@@ -69,7 +75,7 @@ export class BlogController {
   })
   @Post('quote')
   public async createQuote(@Body() post: QuotePostDto) {
-    post.type = 'quote';
+    post.type = PostType.Quote;
     const newPost = await this.blogService.createPost(post);
     return fillDto(PostRdo, newPost.toPojo());
   }
@@ -80,7 +86,7 @@ export class BlogController {
   })
   @Post('image')
   public async createImage(@Body() post: ImagePostDto) {
-    post.type = 'image';
+    post.type = PostType.Image;
     const newPost = await this.blogService.createPost(post);
     return fillDto(PostRdo, newPost.toPojo());
   }
@@ -91,7 +97,7 @@ export class BlogController {
   })
   @Post('link')
   public async createLink(@Body() post: LinkPostDto) {
-    post.type = 'link';
+    post.type = PostType.Link;
     const newPost = await this.blogService.createPost(post);
     return fillDto(PostRdo, newPost.toPojo());
   }
