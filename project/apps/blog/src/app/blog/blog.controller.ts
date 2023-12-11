@@ -24,6 +24,7 @@ import { PostRdo } from './rdo/post.rdo';
 import { ApiResponse } from '@nestjs/swagger';
 import { PostType } from '@project/shared/types';
 import { DEFAULT_FETCHED_POSTS } from './blog.const';
+import { PostDto } from './blog.types';
 
 @Controller('blog')
 export class BlogController {
@@ -51,53 +52,9 @@ export class BlogController {
     status: HttpStatus.CREATED,
     description: 'Post have been successfully created',
   })
-  @Post('video')
-  public async createVideo(@Body() post: VideoPostDto) {
-    post.type = PostType.Video;
-    const newPost = await this.blogService.createPost(post);
-    return fillDto(PostRdo, newPost.toPojo());
-  }
-
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Post have been successfully created',
-  })
-  @Post('text')
-  public async createText(@Body() post: TextPostDto) {
-    post.type = PostType.Text;
-    const newPost = await this.blogService.createPost(post);
-    return fillDto(PostRdo, newPost.toPojo());
-  }
-
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Post have been successfully created',
-  })
-  @Post('quote')
-  public async createQuote(@Body() post: QuotePostDto) {
-    post.type = PostType.Quote;
-    const newPost = await this.blogService.createPost(post);
-    return fillDto(PostRdo, newPost.toPojo());
-  }
-
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Post have been successfully created',
-  })
-  @Post('image')
-  public async createImage(@Body() post: ImagePostDto) {
-    post.type = PostType.Image;
-    const newPost = await this.blogService.createPost(post);
-    return fillDto(PostRdo, newPost.toPojo());
-  }
-
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Post have been successfully created',
-  })
-  @Post('link')
-  public async createLink(@Body() post: LinkPostDto) {
-    post.type = PostType.Link;
+  @Post(':type')
+  public async createPostByType(@Param('type') type: PostType, @Body() post: PostDto) {
+    post.type = type;
     const newPost = await this.blogService.createPost(post);
     return fillDto(PostRdo, newPost.toPojo());
   }
