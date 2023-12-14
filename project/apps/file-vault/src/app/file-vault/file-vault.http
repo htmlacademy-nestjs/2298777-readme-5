@@ -1,0 +1,11 @@
+GET http://localhost:3003/api/file/15ee0f4c-bc59-4d69-b90d-6fc7308bd235 HTTP/1.1
+
+###
+
+POST http://localhost:3003/api/file/upload HTTP/1.1
+Content-Type: application/json
+
+{
+    "imageUri": "test.txt",
+    "type": "avatar"
+}

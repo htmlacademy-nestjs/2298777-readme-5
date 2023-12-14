@@ -13,8 +13,13 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "strictPropertyInitialization": false,
     "baseUrl": ".",
-    "paths": {},
+    "paths": {
+      "@project/shared/core": ["shared/core/src/index.ts"],
+      "@project/shared/types": ["shared/types/src/index.ts"],
+      "@project/shared/utils": ["shared/utils/src/index.ts"]
+    },
     "strict": true
   },
   "exclude": ["node_modules", "tmp"]
