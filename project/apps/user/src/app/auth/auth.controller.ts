@@ -51,9 +51,6 @@ export class AuthController {
   @Get(':id')
   public async getUser(@Param('id') id: string) {
     const user = await this.authService.getUser(id);
-    if (!user) {
-      return null;
-    }
     return fillDto(UserRdo, user.toPojo());
   }
 }
