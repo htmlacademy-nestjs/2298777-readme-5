@@ -22,7 +22,7 @@ export class AuthController {
   @Post('register')
   public async register(@Body() dto: CreateUserDto) {
     const newUser = await this.authService.register(dto);
-    return fillDto(UserRdo, newUser.toPojo());
+    return fillDto(UserRdo, { ...newUser.toObject() });
   }
 
   @ApiResponse({
@@ -36,7 +36,7 @@ export class AuthController {
   @Post('login')
   public async login(@Body() dto: LoginUserDto) {
     const user = await this.authService.validateUser(dto);
-    return fillDto(UserRdo, user);
+    return fillDto(UserRdo, { ...user.toObject() });
   }
 
   @ApiResponse({
@@ -51,6 +51,6 @@ export class AuthController {
   @Get(':id')
   public async getUser(@Param('id') id: string) {
     const user = await this.authService.getUser(id);
-    return fillDto(UserRdo, user.toPojo());
+    return fillDto(UserRdo, { ...user.toObject() });
   }
 }

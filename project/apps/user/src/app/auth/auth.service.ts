@@ -9,6 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { AuthUser } from '@project/shared/types';
 import { UserEntity } from '../user/user.entity';
 import { LoginUserDto } from './dto/login-user.dto';
+import { UserModel } from '../user/user.model';
 
 @Injectable()
 export class AuthService {
@@ -22,17 +23,16 @@ export class AuthService {
       firstName,
       lastName,
       avatar: '',
-      registerDate: new Date(),
       publicationsCount: 0,
       subscribersCount: 0,
-      passwordHash: '',
+      password,
     };
 
     if (await this.userRepository.findByEmail(email)) {
       throw new ConflictException('User with this email already exists');
     }
 
-    const newUser = await new UserEntity(user).setPassword(password);
+    const newUser = new UserEntity(user);
 
     return this.userRepository.save(newUser);
   }
@@ -52,7 +52,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
 
-    return user.toPojo();
+    return user;
   }
 
   public async getUser(id: string) {
