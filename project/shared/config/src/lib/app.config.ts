@@ -1,6 +1,5 @@
 import { registerAs } from '@nestjs/config';
 import * as Joi from 'joi';
-import { config, env } from 'process';
 
 const DEFAULT_PORT = 3000;
 const ENVIRONMENT = ['development', 'production', 'test'] as const;

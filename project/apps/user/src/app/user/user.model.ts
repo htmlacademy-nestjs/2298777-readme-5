@@ -1,8 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { AuthUser } from '@project/shared/types';
-import { compare, genSalt, hash } from 'bcrypt';
 import { Document } from 'mongoose';
-import { SALT_ROUNDS } from './user.constant';
 
 @Schema({
   collection: 'users',
@@ -49,13 +46,3 @@ export class UserModel extends Document {
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserModel);
-
-UserSchema.methods.setPassword = async function (password: string) {
-  const salt = await genSalt(SALT_ROUNDS);
-  this.passwordHash = await hash(password, salt);
-  return this;
-};
-
-UserSchema.methods.comparePassword = async function (password: string) {
-  return compare(password, this.passwordHash);
-};

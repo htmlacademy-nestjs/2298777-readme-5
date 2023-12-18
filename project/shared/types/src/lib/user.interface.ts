@@ -9,5 +9,5 @@ export interface User {
 }
 
 export interface AuthUser extends User {
-  password: string;
+  passwordHash: string;
 }

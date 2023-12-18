@@ -4,7 +4,7 @@ import { FileType, FileVault } from '@project/shared/types';
 export class FileVaultEntity implements FileVault, Entity<string> {
   public id?: string;
   public imageUri: string;
-  public type: FileType;
+  public type: string;
 
   constructor(file: FileVault) {
     this.id = file.id;
@@ -18,5 +18,9 @@ export class FileVaultEntity implements FileVault, Entity<string> {
       imageUri: this.imageUri,
       type: this.type,
     };
+  }
+
+  static fromObject(file: FileVault): FileVaultEntity {
+    return new FileVaultEntity(file);
   }
 }

@@ -1,8 +1,7 @@
-version: '3.1'
-
+version: '3.9'
 services:
   readme.user.mongo:
-    image: mongo
+    image: mongo:4.4
     restart: always
     container_name: readme.user.mongo
 
@@ -20,7 +19,7 @@ services:
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/${MONGODB_DATABASE} --quiet
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 5
 
   readme.user.mongo.ui:
@@ -32,7 +31,7 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGODB_USER}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGODB_PASSWORD}
-      ME_CONFIG_MONGODB_URL: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_DATABASE}:27017/
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@readme.user.mongo:27017/
 
 volumes:
   readme.mongo.user:

@@ -12,6 +12,10 @@ export class FileVaultService {
     if (Object.values(FileType).includes(file.type) === false) {
       throw new BadRequestException('Incorrect file type');
     }
+    const existingFile = await this.fileVaultRepository.findByImageUri(file.imageUri);
+    if (existingFile) {
+      throw new BadRequestException('File already exists');
+    }
     const newFile = new FileVaultEntity(file);
     return await this.fileVaultRepository.save(newFile);
   }

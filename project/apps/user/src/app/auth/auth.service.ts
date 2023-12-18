@@ -9,7 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { AuthUser } from '@project/shared/types';
 import { UserEntity } from '../user/user.entity';
 import { LoginUserDto } from './dto/login-user.dto';
-import { UserModel } from '../user/user.model';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -25,14 +25,14 @@ export class AuthService {
       avatar: '',
       publicationsCount: 0,
       subscribersCount: 0,
-      password,
+      passwordHash: '',
     };
 
     if (await this.userRepository.findByEmail(email)) {
       throw new ConflictException('User with this email already exists');
     }
 
-    const newUser = new UserEntity(user);
+    const newUser = await new UserEntity(user).setPassword(password);
 
     return this.userRepository.save(newUser);
   }
@@ -61,5 +61,23 @@ export class AuthService {
       throw new NotFoundException('User with this id does not exist');
     }
     return user;
+  }
+
+  public async updatePassword(id: string, dto: UpdatePasswordDto) {
+    const { oldPassword, newPassword } = dto;
+
+    const user = await this.userRepository.findById(id);
+
+    if (!user) {
+      throw new NotFoundException('User with this id does not exist');
+    }
+
+    const isPasswordValid = await user.comparePassword(oldPassword);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid password');
+    }
+
+    return this.userRepository.updateById(id, await user.setPassword(newPassword));
   }
 }
