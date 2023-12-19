@@ -28,3 +28,12 @@ export function fillDto<T, V extends PlainObject>(
 export const sortDate = (a: Date, b: Date) => {
   return a.getTime() - b.getTime();
 };
+
+export const getMongoConnectionUri = (
+  user: string,
+  password: string,
+  host: string,
+  port: number,
+  dbName: string,
+  authDatabase: string
+): string => `mongodb://${user}:${password}@${host}:${port}/${dbName}?authSource=${authDatabase}`;

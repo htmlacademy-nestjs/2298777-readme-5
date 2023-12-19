@@ -4,7 +4,6 @@ export interface User {
   lastName: string;
   email: string;
   avatar?: string;
-  registerDate: Date;
   publicationsCount: number;
   subscribersCount: number;
 }

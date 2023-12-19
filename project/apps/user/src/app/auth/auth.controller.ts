@@ -1,10 +1,11 @@
-import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { fillDto } from '@project/shared/utils';
 import { UserRdo } from './rdo/user.rdo';
 import { LoginUserDto } from './dto/login-user.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -36,7 +37,7 @@ export class AuthController {
   @Post('login')
   public async login(@Body() dto: LoginUserDto) {
     const user = await this.authService.validateUser(dto);
-    return fillDto(UserRdo, user);
+    return fillDto(UserRdo, user.toPojo());
   }
 
   @ApiResponse({
@@ -51,9 +52,17 @@ export class AuthController {
   @Get(':id')
   public async getUser(@Param('id') id: string) {
     const user = await this.authService.getUser(id);
-    if (!user) {
-      return null;
-    }
+    return fillDto(UserRdo, user.toPojo());
+  }
+
+  @ApiResponse({
+    type: UserRdo,
+    status: HttpStatus.OK,
+    description: 'User has been successfully updated',
+  })
+  @Put(':id')
+  public async updatePassword(@Param('id') id: string, @Body() dto: UpdatePasswordDto) {
+    const user = await this.authService.updatePassword(id, dto);
     return fillDto(UserRdo, user.toPojo());
   }
 }

@@ -9,7 +9,6 @@ export class UserEntity implements AuthUser, Entity<string> {
   public firstName: string;
   public lastName: string;
   public avatar?: string;
-  public registerDate: Date;
   public publicationsCount: number;
   public subscribersCount: number;
   public passwordHash: string;
@@ -19,33 +18,34 @@ export class UserEntity implements AuthUser, Entity<string> {
     this.firstName = user.firstName;
     this.lastName = user.lastName;
     this.avatar = user.avatar;
-    this.registerDate = user.registerDate;
     this.publicationsCount = user.publicationsCount;
     this.subscribersCount = user.subscribersCount;
     this.passwordHash = user.passwordHash;
   }
 
-  public toPojo() {
+  toPojo(): Record<string, unknown> {
     return {
       id: this.id,
       email: this.email,
       firstName: this.firstName,
       lastName: this.lastName,
       avatar: this.avatar,
-      registerDate: this.registerDate,
       publicationsCount: this.publicationsCount,
       subscribersCount: this.subscribersCount,
-      passwordHash: this.passwordHash,
     };
   }
 
-  public async setPassword(password: string): Promise<UserEntity> {
+  public async setPassword(password: string) {
     const salt = await genSalt(SALT_ROUNDS);
     this.passwordHash = await hash(password, salt);
     return this;
   }
 
-  public async comparePassword(password: string): Promise<boolean> {
+  public async comparePassword(password: string) {
     return compare(password, this.passwordHash);
+  }
+
+  static fromObject(user: AuthUser): UserEntity {
+    return new UserEntity(user);
   }
 }

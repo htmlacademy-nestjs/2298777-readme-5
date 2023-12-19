@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { FileVaultModule } from './file-vault/file-vault.module';
+import { ConfigFileModule, getMongooseOptions } from '@project/shared/config';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-  imports: [FileVaultModule],
+  imports: [FileVaultModule, ConfigFileModule, MongooseModule.forRootAsync(getMongooseOptions())],
 })
 export class AppModule {}
