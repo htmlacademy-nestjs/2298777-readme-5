@@ -1,12 +1,16 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { FileVaultRepository } from './file-vault.repository';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateFileDto } from './dto/create-file.dto';
 import { FileVaultEntity } from './file-vault.entity';
 import { FileType } from '@project/shared/types';
+import { FileFinderRepository } from '@project/shared/core';
+import { FileVaultRepositoryToken } from './file-vault.token';
 
 @Injectable()
 export class FileVaultService {
-  constructor(private readonly fileVaultRepository: FileVaultRepository) {}
+  constructor(
+    @Inject(FileVaultRepositoryToken)
+    private readonly fileVaultRepository: FileFinderRepository<FileVaultEntity>
+  ) {}
 
   public async upload(file: CreateFileDto) {
     if (Object.values(FileType).includes(file.type) === false) {

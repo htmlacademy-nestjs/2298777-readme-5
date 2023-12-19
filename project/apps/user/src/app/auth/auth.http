@@ -2,7 +2,7 @@ POST http://localhost:3000/api/auth/register HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "coc@gmail.com",
+  "email": "cococ@gmail.com",
   "password": "123456",
   "firstName": "bogna",
   "lastName": "bogna"
@@ -14,20 +14,20 @@ POST http://localhost:3000/api/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "coc@gmail.com",
+  "email": "coco@gmail.com",
   "password": "123456"
 }
 
 ###
 
-GET http://localhost:3000/api/auth/6580a304386bd0d0e4a470d9 HTTP/1.1
+GET http://localhost:3000/api/auth/6580a304386bd0d0ea470d9 HTTP/1.1
 
 ###
 
-PUT http://localhost:3000/api/auth/6580a321386bd0d0e4a470e0 HTTP/1.1
+PUT http://localhost:3000/api/auth/6580a321386bd0d0e4a470e HTTP/1.1
 Content-Type: application/json
 
 {
-  "oldPassword": "312324",
-  "newPassword": "324"
+  "oldPassword": "3214",
+  "newPassword": "123"
 }

@@ -1,19 +1,24 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserRepository } from '../user/user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthUser } from '@project/shared/types';
 import { UserEntity } from '../user/user.entity';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { EmailFinderRepository } from '@project/shared/core';
+import { UserRepositoryToken } from '../user/user.token';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    @Inject(UserRepositoryToken)
+    private readonly userRepository: EmailFinderRepository<UserEntity>
+  ) {}
 
   public async register(dto: CreateUserDto) {
     const { email, password, firstName, lastName } = dto;

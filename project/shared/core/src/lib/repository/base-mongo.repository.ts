@@ -22,8 +22,12 @@ export abstract class BaseMongoRepository<
   }
 
   public async findById(id: EntityType['id']): Promise<EntityType | null> {
-    const document = await this.model.findById(id).exec();
-    return this.createEntityFromDocument(document);
+    try {
+      const document = await this.model.findById(id).exec();
+      return this.createEntityFromDocument(document);
+    } catch (e) {
+      throw new NotFoundException(`Entity with id ${id} not found`);
+    }
   }
 
   public async save(entity: EntityType): Promise<EntityType> {

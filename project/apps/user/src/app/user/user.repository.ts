@@ -1,12 +1,15 @@
 import { UserEntity } from './user.entity';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserModel } from './user.model';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { BaseMongoRepository } from '@project/shared/core';
+import { BaseMongoRepository, EmailFinderRepository } from '@project/shared/core';
 
 @Injectable()
-export class UserRepository extends BaseMongoRepository<UserEntity, UserModel> {
+export class UserRepository
+  extends BaseMongoRepository<UserEntity, UserModel>
+  implements EmailFinderRepository<UserEntity>
+{
   constructor(@InjectModel(UserModel.name) private readonly userModel: Model<UserModel>) {
     super(userModel, UserEntity.fromObject);
   }
