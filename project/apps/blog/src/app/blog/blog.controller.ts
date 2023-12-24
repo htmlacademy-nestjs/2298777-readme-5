@@ -12,14 +12,7 @@ import {
 import { BlogService } from './blog.service';
 import { filterOptions } from './filter-option.enum';
 import { fillDto } from '@project/shared/utils';
-import {
-  VideoPostDto,
-  TextPostDto,
-  QuotePostDto,
-  ImagePostDto,
-  LinkPostDto,
-  UpdatePostDto,
-} from './dto';
+import { UpdatePostDto } from './dto';
 import { PostRdo } from './rdo/post.rdo';
 import { ApiResponse } from '@nestjs/swagger';
 import { PostType } from '@project/shared/types';
