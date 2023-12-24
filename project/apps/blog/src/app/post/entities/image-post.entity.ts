@@ -21,4 +21,8 @@ export class ImagePostEntity extends BasePostEntity implements ImagePost {
     super.update(updatePost);
     imageUrl && (this.imageUrl = imageUrl);
   }
+
+  static fromObject(obj: ImagePost) {
+    return new ImagePostEntity(obj);
+  }
 }

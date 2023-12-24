@@ -5,7 +5,8 @@ export abstract class BasePostEntity implements Post, Entity<string> {
   public id?: string;
   public tags?: string[];
   public authorId: string;
-  public createDate?: Date;
+  public createdAt?: Date;
+  public updatedAt?: Date;
   public publishDate?: Date;
   public status: PostStatus;
   public originalAuthorId?: string;
@@ -18,7 +19,8 @@ export abstract class BasePostEntity implements Post, Entity<string> {
     this.id = post.id;
     this.tags = post.tags;
     this.authorId = post.authorId;
-    this.createDate = new Date();
+    this.createdAt = post.createdAt;
+    this.updatedAt = post.updatedAt;
     this.publishDate = post.publishDate;
     this.status = post.status;
     this.originalAuthorId = post.originalAuthorId;
@@ -33,7 +35,8 @@ export abstract class BasePostEntity implements Post, Entity<string> {
       id: this.id,
       tags: this.tags,
       authorId: this.authorId,
-      createDate: this.createDate,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
       publishDate: this.publishDate,
       status: this.status,
       originalAuthorId: this.originalAuthorId,
@@ -57,4 +60,6 @@ export abstract class BasePostEntity implements Post, Entity<string> {
     status && (this.status = status);
     tags && (this.tags = tags);
   }
+
+  static fromObject(post: Post) {}
 }

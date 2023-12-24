@@ -5,6 +5,7 @@ import {
   QuotePostRepository,
   TextPostRepository,
   VideoPostRepository,
+  PostRepository,
 } from './repository';
 import { PostEntity } from '../blog/blog.types';
 import { PostType } from '@project/shared/types';
@@ -16,60 +17,52 @@ export class PostRepositoryService {
     private readonly linkPostRepository: LinkPostRepository,
     private readonly quotePostRepository: QuotePostRepository,
     private readonly textPostRepository: TextPostRepository,
-    private readonly imagePostRepository: ImagePostRepository
+    private readonly imagePostRepository: ImagePostRepository,
+    private readonly postRepository: PostRepository
   ) {}
 
   public async findById(id: string) {
-    const repositories = [
-      this.videoPostRepository,
-      this.linkPostRepository,
-      this.quotePostRepository,
-      this.textPostRepository,
-      this.imagePostRepository,
-    ];
+    const post = await this.postRepository.findFirst({ where: { id } });
 
-    for (const repository of repositories) {
-      const entity = await repository.findById(id);
-      if (entity) {
-        return entity;
-      }
+    if (!post) {
+      return null;
     }
 
-    return null;
+    const repository = this.getRepositoryByType(post.type as PostType);
+    const typedPost = await (repository.findFirst as any)({ where: { postId: id } });
+
+    return repository.makeEntityFromObject(typedPost);
   }
 
   public async save<T extends PostEntity>(post: T, type: PostType) {
+    this.postRepository.create(post as any);
     const repository = this.getRepositoryByType(type);
-    return await repository.save(post as any);
+    return await (repository.create as any)(post as any);
   }
 
   public async deleteById(id: string, type: PostType) {
+    await this.postRepository.delete({ where: { id } });
     const repository = this.getRepositoryByType(type);
-    return await repository.deleteById(id);
+    return await (repository.delete as any)({ where: { postId: id } });
   }
 
   public async update<T extends PostEntity>(post: T, type: PostType) {
+    this.postRepository.update(post as any);
     const repository = this.getRepositoryByType(type);
-    return await repository.updateById(post.id, post as any);
+    return await (repository.update as any)({ where: { postId: post.id }, data: post });
   }
 
   public async getPosts() {
-    const repositories = [
-      this.videoPostRepository,
-      this.linkPostRepository,
-      this.quotePostRepository,
-      this.textPostRepository,
-      this.imagePostRepository,
-    ];
+    const posts = await this.postRepository.findMany({ orderBy: { createdAt: 'desc' } });
 
-    const result: PostEntity[] = [];
+    return await Promise.all(
+      posts.map(async (post) => {
+        const repository = this.getRepositoryByType(post.type as PostType);
+        const typedPost = await (repository.findFirst as any)({ where: { postId: post.id } });
 
-    for (const repository of repositories) {
-      const entities = await repository.getPosts();
-      result.push(...entities);
-    }
-
-    return result;
+        return repository.makeEntityFromObject(typedPost);
+      })
+    );
   }
 
   private getRepositoryByType<T extends PostType>(type: T) {

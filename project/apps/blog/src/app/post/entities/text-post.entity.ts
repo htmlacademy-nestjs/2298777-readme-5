@@ -35,4 +35,8 @@ export class TextPostEntity extends BasePostEntity implements TextPost {
     anonsText && (this.anonsText = anonsText);
     text && (this.text = text);
   }
+
+  static fromObject(post: TextPost) {
+    return new TextPostEntity(post);
+  }
 }

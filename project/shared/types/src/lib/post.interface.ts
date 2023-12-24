@@ -5,7 +5,8 @@ export interface Post {
   id?: string;
   tags?: string[];
   authorId: string;
-  createDate?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   publishDate?: Date;
   status: PostStatus;
   originalAuthorId?: string;

@@ -30,4 +30,8 @@ export class VideoPostEntity extends BasePostEntity implements VideoPost {
     name && (this.name = name);
     videoUrl && (this.videoUrl = videoUrl);
   }
+
+  static fromObject(post: VideoPost) {
+    return new VideoPostEntity(post);
+  }
 }

@@ -30,4 +30,8 @@ export class QuotePostEntity extends BasePostEntity implements QuotePost {
     quote && (this.quote = quote);
     quoteAuthor && (this.quoteAuthor = quoteAuthor);
   }
+
+  static fromObject(post: QuotePost) {
+    return new QuotePostEntity(post);
+  }
 }

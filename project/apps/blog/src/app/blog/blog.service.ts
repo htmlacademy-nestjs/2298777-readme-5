@@ -38,7 +38,7 @@ export class BlogService {
         break;
       default:
         result = (await this.postRepository.getPosts()).sort((post1, post2) =>
-          sortDate(post2.createDate!, post1.createDate!)
+          sortDate(post2.createdAt!, post1.createdAt!)
         );
         break;
     }
@@ -51,18 +51,7 @@ export class BlogService {
   }
 
   public async likeHandle(postId: string, userId: string) {
-    const post = await this.postRepository.findById(postId);
-    if (!post) {
-      throw new BadRequestException('Post not found');
-    }
-    if ((await this.likeRepository.find(postId, userId)) === null) {
-      await this.likeRepository.likePost(postId, userId);
-      post.setLikesCount(post.likesCount + 1);
-    } else {
-      await this.likeRepository.unlikePost(postId, userId);
-      post.setLikesCount(post.likesCount - 1);
-    }
-    return post;
+    throw new Error('Method not implemented.');
   }
 
   public async getPost(id: string) {

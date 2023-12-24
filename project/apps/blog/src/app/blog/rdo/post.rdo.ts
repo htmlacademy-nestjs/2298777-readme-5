@@ -25,7 +25,15 @@ export class PostRdo {
     example: '2020-01-01T00:00:00.000Z',
   })
   @Expose()
-  public createDate: Date;
+  public createdAt: Date;
+
+  @ApiProperty({
+    type: Date,
+    description: 'Post create date',
+    example: '2020-01-01T00:00:00.000Z',
+  })
+  @Expose()
+  public updatedAt?: Date;
 
   @ApiProperty({
     type: Date,

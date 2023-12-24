@@ -7,6 +7,7 @@ import {
   TextPostRepository,
   VideoPostRepository,
 } from './repository';
+import { PostRepository } from './repository/post.repository';
 
 @Module({
   exports: [PostRepositoryService],
@@ -17,6 +18,7 @@ import {
     VideoPostRepository,
     QuotePostRepository,
     TextPostRepository,
+    PostRepository,
   ],
 })
 export class PostModule {}

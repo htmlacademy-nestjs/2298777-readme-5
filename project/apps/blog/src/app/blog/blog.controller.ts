@@ -59,7 +59,7 @@ export class BlogController {
   @Post('like/:id')
   public async like(@Param('id') id: string) {
     const post = await this.blogService.likeHandle(id, '3123fsdf');
-    return fillDto(PostRdo, post.toPojo());
+    //return fillDto(PostRdo, post.toPojo());
   }
 
   @ApiResponse({

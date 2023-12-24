@@ -30,4 +30,8 @@ export class LinkPostEntity extends BasePostEntity implements LinkPost {
     linkUrl && (this.linkUrl = linkUrl);
     description && (this.description = description);
   }
+
+  static fromObject(post: LinkPost) {
+    return new LinkPostEntity(post);
+  }
 }
