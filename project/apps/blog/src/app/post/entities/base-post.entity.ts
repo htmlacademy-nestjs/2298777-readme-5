@@ -1,7 +1,7 @@
 import { Post, PostStatus, PostType } from '@project/shared/types';
 import { Entity } from '@project/shared/core';
 
-export abstract class BasePostEntity implements Post, Entity<string> {
+export class BasePostEntity implements Post, Entity<string> {
   public id?: string;
   public tags?: string[];
   public authorId: string;
@@ -47,19 +47,7 @@ export abstract class BasePostEntity implements Post, Entity<string> {
     };
   }
 
-  public setLikesCount(count: number) {
-    this.likesCount = count;
+  static fromObject(post: Post) {
+    return new BasePostEntity(post);
   }
-
-  public setCommentsCount(count: number) {
-    this.commentsCount = count;
-  }
-
-  public update(updatePost: { tags?: string[]; status?: PostStatus }) {
-    const { tags, status } = updatePost;
-    status && (this.status = status);
-    tags && (this.tags = tags);
-  }
-
-  static fromObject(post: Post) {}
 }

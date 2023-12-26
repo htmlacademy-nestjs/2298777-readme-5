@@ -19,4 +19,8 @@ export class LikeEntity implements Entity<string> {
       userId: this.userId,
     };
   }
+
+  static fromObject(like: Like) {
+    return new LikeEntity(like);
+  }
 }

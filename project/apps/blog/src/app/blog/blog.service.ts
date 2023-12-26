@@ -9,11 +9,22 @@ import {
   VideoPostEntity,
   TextPostEntity,
   LinkPostEntity,
+  BasePostEntity,
 } from '../post/entities';
-import { UpdatePostDto } from './dto';
+import {
+  ImagePostDto,
+  LinkPostDto,
+  QuotePostDto,
+  TextPostDto,
+  UpdatePostDto,
+  VideoPostDto,
+} from './dto';
 import { defaultCreateValues } from './default-create-values';
-import type { PostDto, PostEntity, PostEntityForDto } from './blog.types';
+import type { PostDto, PostEntityForDto } from './blog.types';
 import { PostType } from '@project/shared/types';
+import { ResultPostEntity } from '../post/entities/result-post.entity';
+import { LikeEntity } from '../like/like.entity';
+
 @Injectable()
 export class BlogService {
   constructor(
@@ -23,35 +34,56 @@ export class BlogService {
 
   public async filter(filterOption: filterOptions, quantity: number, next: number) {
     const start = next * quantity;
-    const end = start + quantity;
-    let result: PostEntity[];
+    let result: ResultPostEntity[];
+
     switch (filterOption) {
       case filterOptions.Like:
-        result = (await this.postRepository.getPosts()).sort(
+        result = (await this.postRepository.getPosts(quantity, start)).sort(
           (post1, post2) => post2.likesCount - post1.likesCount
         );
         break;
       case filterOptions.Popular:
-        result = (await this.postRepository.getPosts()).sort(
+        result = (await this.postRepository.getPosts(quantity, start)).sort(
           (post1, post2) => post2.commentsCount - post1.commentsCount
         );
         break;
       default:
-        result = (await this.postRepository.getPosts()).sort((post1, post2) =>
+        result = (await this.postRepository.getPosts(quantity, start)).sort((post1, post2) =>
           sortDate(post2.createdAt!, post1.createdAt!)
         );
         break;
     }
-    return result.slice(start, end);
+
+    return result;
   }
 
-  public async createPost<T extends PostDto>(post: T): Promise<PostEntityForDto<T>> {
+  public async createPost<T extends PostDto>(post: T): Promise<ResultPostEntity> {
+    const basePost = new BasePostEntity({
+      ...defaultCreateValues,
+      ...post,
+    });
     const postEntity = this.createPostEntity(post);
-    return this.postRepository.save(postEntity, post.type) as Promise<PostEntityForDto<T>>;
+    return this.postRepository.save(basePost, postEntity, post.type);
   }
 
   public async likeHandle(postId: string, userId: string) {
-    throw new Error('Method not implemented.');
+    const post = await this.postRepository.findById(postId);
+    if (!post) {
+      throw new BadRequestException('Post not found');
+    }
+    const like = new LikeEntity({ postId, userId });
+    if (await this.likeRepository.findLike(like)) {
+      await this.likeRepository.deleteLike(like);
+    } else {
+      await this.likeRepository.createLike(like);
+    }
+
+    const updatedPost = BasePostEntity.fromObject({
+      ...post,
+      likesCount: await this.likeRepository.countLikes(postId),
+    });
+
+    return await this.postRepository.update(updatedPost);
   }
 
   public async getPost(id: string) {
@@ -68,7 +100,7 @@ export class BlogService {
     if (!post) {
       throw new BadRequestException('Post not found');
     }
-    await this.postRepository.deleteById(id, post.type);
+    await this.postRepository.deleteById(id);
     return;
   }
 
@@ -77,36 +109,38 @@ export class BlogService {
     if (!post) {
       throw new BadRequestException('Post not found');
     }
-    post.update(updatedPost);
-    return post;
+    const basePost = new BasePostEntity({
+      ...post,
+      ...updatedPost,
+    });
+    const postEntity = this.createPostEntity({
+      ...updatedPost,
+      type: post.type,
+    } as PostDto);
+    return this.postRepository.update(basePost, postEntity);
   }
 
   private createPostEntity<T extends PostDto>(post: T): PostEntityForDto<T> {
     switch (post.type) {
       case PostType.Video:
         return new VideoPostEntity({
-          ...defaultCreateValues,
-          ...(post as VideoPostEntity),
+          ...(post as VideoPostDto),
         }) as PostEntityForDto<T>;
       case PostType.Text:
         return new TextPostEntity({
-          ...defaultCreateValues,
-          ...(post as TextPostEntity),
+          ...(post as TextPostDto),
         }) as PostEntityForDto<T>;
       case PostType.Quote:
         return new QuotePostEntity({
-          ...defaultCreateValues,
-          ...(post as QuotePostEntity),
+          ...(post as QuotePostDto),
         }) as PostEntityForDto<T>;
       case PostType.Image:
         return new ImagePostEntity({
-          ...defaultCreateValues,
-          ...(post as ImagePostEntity),
+          ...(post as ImagePostDto),
         }) as PostEntityForDto<T>;
       case PostType.Link:
         return new LinkPostEntity({
-          ...defaultCreateValues,
-          ...(post as LinkPostEntity),
+          ...(post as LinkPostDto),
         }) as PostEntityForDto<T>;
       default:
         throw new Error('Post type not found');

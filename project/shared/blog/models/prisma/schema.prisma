@@ -12,7 +12,7 @@ model Post {
   id               String     @id @unique @default(uuid()) @map("id")
   authorId         String     @map("author_id")
   createdAt        DateTime   @default(now()) @map("created_at")
-  updatedAt        DateTime   @updatedAt @map("updated_at")
+  updatedAt        DateTime?   @updatedAt @map("updated_at")
   publishDate      DateTime?  @map("publish_date")
   status           PostStatus @default(draft)
   originalAuthorId String?    @map("original_author_id")

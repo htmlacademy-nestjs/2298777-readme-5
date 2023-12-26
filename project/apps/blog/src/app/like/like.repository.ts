@@ -1,37 +1,65 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { BaseRepository } from '@project/shared/core';
+import { Injectable } from '@nestjs/common';
+import { createDecoratorProxy } from '@project/shared/core';
 import { LikeEntity } from './like.entity';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
-export class LikeRepository extends BaseRepository<LikeEntity> {
-  constructor() {
-    super();
-  }
+export class LikeRepository extends createDecoratorProxy<Prisma.LikeDelegate>([
+  'create',
+  'delete',
+  'findFirst',
+  'findMany',
+  'update',
+  'findUnique',
+  'count',
+]) {
+  public async findLike(like: LikeEntity) {
+    const foundLike = await this.findFirst({
+      where: {
+        postId: like.postId,
+        userId: like.userId,
+      },
+    });
 
-  public async find(postId: string, userId: string) {
-    const like = Array.from(this.entities.values()).find(
-      (like) => like.postId === postId && like.userId === userId
-    );
-    return like ?? null;
-  }
-
-  public async likePost(postId: string, userId: string) {
-    if (await this.find(postId, userId)) {
-      throw new ConflictException('You already liked this post');
+    if (!foundLike) {
+      return null;
     }
-    const like = new LikeEntity({ postId, userId });
-    return this.save(like);
+
+    return LikeEntity.fromObject(foundLike);
   }
 
-  public async unlikePost(postId: string, userId: string) {
-    const like = await this.find(postId, userId);
-    if (!like) {
-      throw new ConflictException('You have not liked this post');
+  public async createLike(like: LikeEntity) {
+    const newLike = await this.create({
+      data: {
+        post: {
+          connect: {
+            id: like.postId,
+          },
+        },
+        userId: like.userId,
+      },
+    });
+    return LikeEntity.fromObject(newLike);
+  }
+
+  public async deleteLike(like: LikeEntity) {
+    const foundLike = await this.findLike(like);
+    if (!foundLike) {
+      return null;
     }
-    return this.deleteById(like.id);
+    const deletedLike = await this.delete({
+      where: {
+        id: foundLike.id,
+      },
+    });
+    return LikeEntity.fromObject(deletedLike);
   }
 
   public async countLikes(postId: string) {
-    return Array.from(this.entities.values()).filter((like) => like.postId === postId).length;
+    return await this.count({
+      where: {
+        postId,
+      },
+    });
   }
 }
