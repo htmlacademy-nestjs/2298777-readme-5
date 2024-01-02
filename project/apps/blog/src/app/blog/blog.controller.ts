@@ -49,7 +49,6 @@ export class BlogController {
   public async createPostByType(@Param('type') type: PostType, @Body() post: PostDto) {
     post.type = type;
     const newPost = await this.blogService.createPost(post);
-    console.log(newPost);
     return fillDto(PostRdo, newPost.toPojo());
   }
 

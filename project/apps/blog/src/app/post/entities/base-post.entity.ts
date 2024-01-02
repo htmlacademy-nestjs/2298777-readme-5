@@ -1,7 +1,7 @@
 import { Post, PostStatus, PostType } from '@project/shared/types';
 import { Entity } from '@project/shared/core';
 
-export class BasePostEntity implements Post, Entity<string> {
+export class BasePostEntity implements Post, Entity<string, Post> {
   public id?: string;
   public tags?: string[];
   public authorId: string;
