@@ -6,14 +6,14 @@ export class CommentEntity implements Comment, Entity<string> {
   public postId: string;
   public authorId: string;
   public text: string;
-  public date: Date;
+  public createdAt: Date;
 
   constructor(comment: Comment) {
     this.id = comment.id;
     this.postId = comment.postId;
     this.authorId = comment.authorId;
     this.text = comment.text;
-    this.date = comment.date;
+    this.createdAt = comment.createdAt;
   }
 
   public toPojo() {
@@ -22,7 +22,11 @@ export class CommentEntity implements Comment, Entity<string> {
       postId: this.postId,
       authorId: this.authorId,
       text: this.text,
-      date: this.date,
+      createdAt: this.createdAt,
     };
+  }
+
+  public static fromObject(comment: Comment) {
+    return new CommentEntity(comment);
   }
 }

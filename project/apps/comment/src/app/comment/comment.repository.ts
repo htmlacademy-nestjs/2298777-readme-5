@@ -1,14 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import { BaseRepository } from '@project/shared/core';
+import { createDecoratorProxy } from '@project/shared/core';
 import { CommentEntity } from './comment.entity';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
-export class CommentRepository extends BaseRepository<CommentEntity> {
-  constructor() {
-    super();
+export class CommentRepository extends createDecoratorProxy<Prisma.CommentDelegate>([
+  'create',
+  'delete',
+  'findFirst',
+  'findMany',
+  'update',
+  'findUnique',
+  'count',
+]) {
+  public async save(comment: CommentEntity) {
+    const newComment = await this.create({
+      data: comment,
+    });
+    return CommentEntity.fromObject(newComment);
   }
 
-  public async getCommentsByPostId(postId: string) {
-    return Array.from(this.entities.values()).filter((comment) => comment.postId === postId);
+  public async deleteById(id: string) {
+    const deletedComment = await this.delete({
+      where: {
+        id,
+      },
+    });
+    return CommentEntity.fromObject(deletedComment);
+  }
+
+  public async getCommentsByPostId(postId: string, take?: number, skip?: number) {
+    const comments = await this.findMany({
+      where: { postId },
+      take,
+      skip: skip || 0,
+      orderBy: { createdAt: 'desc' },
+    });
+    return comments.map((comment) => CommentEntity.fromObject(comment));
   }
 }

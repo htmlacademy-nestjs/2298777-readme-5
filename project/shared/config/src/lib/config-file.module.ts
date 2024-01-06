@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import appConfig from './app.config';
 import mongoConfig from './mongo.config';
+import fileUploaderConfig from './file-uploader.config';
 
-const ENV_FILE_FILE_PATH = 'apps/file-vault/file.env';
+const ENV_FILE_FILE_PATH = 'apps/file-vault/.env';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       cache: false,
-      load: [appConfig, mongoConfig],
+      load: [fileUploaderConfig, mongoConfig],
       envFilePath: ENV_FILE_FILE_PATH,
     }),
   ],

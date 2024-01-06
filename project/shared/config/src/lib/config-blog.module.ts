@@ -1,18 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import appConfig from './app.config';
-import mongoConfig from './mongo.config';
 
-const ENV_USER_FILE_PATH = 'apps/user/.env';
+const ENV_BLOG_FILE_PATH = 'apps/blog/.env';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       cache: false,
-      load: [appConfig, mongoConfig],
-      envFilePath: ENV_USER_FILE_PATH,
+      load: [appConfig],
+      envFilePath: ENV_BLOG_FILE_PATH,
     }),
   ],
 })
-export class ConfigUserModule {}
+export class ConfigBlogModule {}
