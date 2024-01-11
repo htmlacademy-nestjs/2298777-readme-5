@@ -12,14 +12,7 @@ import {
 import { BlogService } from './blog.service';
 import { filterOptions } from './filter-option.enum';
 import { fillDto } from '@project/shared/utils';
-import {
-  VideoPostDto,
-  TextPostDto,
-  QuotePostDto,
-  ImagePostDto,
-  LinkPostDto,
-  UpdatePostDto,
-} from './dto';
+import { UpdatePostDto } from './dto';
 import { PostRdo } from './rdo/post.rdo';
 import { ApiResponse } from '@nestjs/swagger';
 import { PostType } from '@project/shared/types';
@@ -39,8 +32,8 @@ export class BlogController {
     const { filter, quantity, next } = query;
     const result = await this.blogService.filter(
       filter,
-      quantity ?? DEFAULT_FETCHED_POSTS,
-      next ?? 0
+      quantity ? +quantity : DEFAULT_FETCHED_POSTS,
+      next ? +next : 0
     );
     return fillDto(
       PostRdo,
@@ -56,6 +49,7 @@ export class BlogController {
   public async createPostByType(@Param('type') type: PostType, @Body() post: PostDto) {
     post.type = type;
     const newPost = await this.blogService.createPost(post);
+    console.log(newPost);
     return fillDto(PostRdo, newPost.toPojo());
   }
 
@@ -65,7 +59,7 @@ export class BlogController {
   })
   @Post('like/:id')
   public async like(@Param('id') id: string) {
-    const post = await this.blogService.likeHandle(id, '3123fsdf');
+    const post = await this.blogService.likeHandle(id, 'fffff');
     return fillDto(PostRdo, post.toPojo());
   }
 

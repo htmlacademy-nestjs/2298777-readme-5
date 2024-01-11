@@ -1,11 +1,12 @@
 import { Post, PostStatus, PostType } from '@project/shared/types';
 import { Entity } from '@project/shared/core';
 
-export abstract class BasePostEntity implements Post, Entity<string> {
+export class BasePostEntity implements Post, Entity<string> {
   public id?: string;
   public tags?: string[];
   public authorId: string;
-  public createDate?: Date;
+  public createdAt?: Date;
+  public updatedAt?: Date;
   public publishDate?: Date;
   public status: PostStatus;
   public originalAuthorId?: string;
@@ -18,7 +19,8 @@ export abstract class BasePostEntity implements Post, Entity<string> {
     this.id = post.id;
     this.tags = post.tags;
     this.authorId = post.authorId;
-    this.createDate = new Date();
+    this.createdAt = post.createdAt;
+    this.updatedAt = post.updatedAt;
     this.publishDate = post.publishDate;
     this.status = post.status;
     this.originalAuthorId = post.originalAuthorId;
@@ -33,7 +35,8 @@ export abstract class BasePostEntity implements Post, Entity<string> {
       id: this.id,
       tags: this.tags,
       authorId: this.authorId,
-      createDate: this.createDate,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
       publishDate: this.publishDate,
       status: this.status,
       originalAuthorId: this.originalAuthorId,
@@ -44,17 +47,7 @@ export abstract class BasePostEntity implements Post, Entity<string> {
     };
   }
 
-  public setLikesCount(count: number) {
-    this.likesCount = count;
-  }
-
-  public setCommentsCount(count: number) {
-    this.commentsCount = count;
-  }
-
-  public update(updatePost: { tags?: string[]; status?: PostStatus }) {
-    const { tags, status } = updatePost;
-    status && (this.status = status);
-    tags && (this.tags = tags);
+  static fromObject(post: Post) {
+    return new BasePostEntity(post);
   }
 }

@@ -1,11 +1,22 @@
-import { BaseRepository } from '@project/shared/core';
-import { QuotePostEntity } from '../entities';
 import { Injectable } from '@nestjs/common';
-import { BasePostRepository } from './base-post.repository';
+import { createDecoratorProxy } from '@project/shared/core';
+import { Prisma } from '@prisma/client';
+import { QuotePostEntity } from '../entities';
+import { MakeEntityInterface } from './make-entity.interface';
 
 @Injectable()
-export class QuotePostRepository extends BasePostRepository<QuotePostEntity> {
-  constructor() {
-    super();
+export class QuotePostRepository
+  extends createDecoratorProxy<Prisma.QuotePostDelegate>([
+    'create',
+    'delete',
+    'findFirst',
+    'findMany',
+    'update',
+    'findUnique',
+  ])
+  implements MakeEntityInterface<QuotePostEntity>
+{
+  makeEntityFromObject(obj: Record<string, unknown>) {
+    return QuotePostEntity.fromObject(obj as any);
   }
 }

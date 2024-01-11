@@ -16,6 +16,7 @@
     "strictPropertyInitialization": false,
     "baseUrl": ".",
     "paths": {
+      "@project/shared/blog/models": ["shared/blog/models/src/index.ts"],
       "@project/shared/config": ["shared/config/src/index.ts"],
       "@project/shared/core": ["shared/core/src/index.ts"],
       "@project/shared/types": ["shared/types/src/index.ts"],
