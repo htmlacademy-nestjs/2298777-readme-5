@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import appConfig from './app.config';
+import appConfig from './app/app.config';
 
 const ENV_BLOG_FILE_PATH = 'apps/blog/.env';
 

@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FileType } from '@project/shared/types';
 import { Expose } from 'class-transformer';
 
 export class FileRdo {
@@ -17,13 +16,37 @@ export class FileRdo {
     example: 'my-file',
   })
   @Expose()
-  public imageUri: string;
+  public originalName: string;
 
   @ApiProperty({
     type: String,
-    description: 'The type of the file.',
-    example: 'image.png',
+    description: 'The hash name of the file.',
+    example: '13231',
   })
   @Expose()
-  public type: FileType;
+  public hashName: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'The mime type of the file.',
+    example: 'image/png',
+  })
+  @Expose()
+  public mimetype: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'The size of the file.',
+    example: 100,
+  })
+  @Expose()
+  public size: number;
+
+  @ApiProperty({
+    type: String,
+    description: 'The directory of the file.',
+    example: '/static',
+  })
+  @Expose()
+  public directory: string;
 }

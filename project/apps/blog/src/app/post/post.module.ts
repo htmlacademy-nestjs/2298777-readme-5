@@ -9,6 +9,7 @@ import {
 } from './repository';
 import { PostRepository } from './repository/post.repository';
 import { PrismaClientModule, PrismaClientService } from '@project/shared/blog/models';
+import { TagModule } from '../tag/tag.module';
 @Module({
   exports: [PostRepositoryService],
   providers: [
@@ -44,6 +45,6 @@ import { PrismaClientModule, PrismaClientService } from '@project/shared/blog/mo
       inject: [PrismaClientService],
     },
   ],
-  imports: [PrismaClientModule],
+  imports: [PrismaClientModule, TagModule],
 })
 export class PostModule {}

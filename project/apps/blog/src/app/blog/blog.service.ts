@@ -34,25 +34,7 @@ export class BlogService {
 
   public async filter(filterOption: filterOptions, quantity: number, next: number) {
     const start = next * quantity;
-    let result: ResultPostEntity[];
-
-    switch (filterOption) {
-      case filterOptions.Like:
-        result = (await this.postRepository.getPosts(quantity, start)).sort(
-          (post1, post2) => post2.likesCount - post1.likesCount
-        );
-        break;
-      case filterOptions.Popular:
-        result = (await this.postRepository.getPosts(quantity, start)).sort(
-          (post1, post2) => post2.commentsCount - post1.commentsCount
-        );
-        break;
-      default:
-        result = (await this.postRepository.getPosts(quantity, start)).sort((post1, post2) =>
-          sortDate(post2.createdAt!, post1.createdAt!)
-        );
-        break;
-    }
+    const result = this.postRepository.getPosts(quantity, start, filterOption);
 
     return result;
   }
@@ -96,7 +78,6 @@ export class BlogService {
 
   public async deletePost(id: string) {
     const post = await this.postRepository.findById(id);
-    console.log(post);
     if (!post) {
       throw new BadRequestException('Post not found');
     }

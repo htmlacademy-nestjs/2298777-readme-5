@@ -1,11 +1,13 @@
-GET http://localhost:3003/api/file/65817544a79768499a03d801 HTTP/1.1
+GET http://localhost:3003/api/file/659fcc1456f56cdfbc9c61b1 HTTP/1.1
 
 ###
 
 POST http://localhost:3003/api/file/upload HTTP/1.1
-Content-Type: application/json
+Content-Type: multipart/form-data; boundary=boundary
 
-{
-    "imageUri": "sssss.txt",
-    "type": "avatar"
-}
+--boundary
+Content-Disposition: form-data; name="file"; filename="balls.txt"
+
+test
+
+--boundary--

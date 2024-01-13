@@ -16,6 +16,7 @@ export class UserRepository
 
   public async findByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.userModel.findOne({ email }).exec();
-    return this.createEntityFromDocument(user);
+    const entity = this.createEntityFromDocument(user);
+    return entity;
   }
 }

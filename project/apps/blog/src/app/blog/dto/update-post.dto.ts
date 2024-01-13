@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { PostStatus } from '@project/shared/types';
-import { IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UpdatePostDto {
   @ApiProperty({
@@ -9,6 +9,7 @@ export class UpdatePostDto {
     example: ['tag1', 'tag2', 'tag3'],
   })
   @IsString({ each: true })
+  @IsOptional()
   public tags?: string[];
 
   @ApiProperty({
@@ -17,6 +18,8 @@ export class UpdatePostDto {
     example: PostStatus.Published,
   })
   @IsString()
+  @IsNotEmpty()
+  @IsOptional()
   public status?: PostStatus;
 
   @ApiProperty({
@@ -25,6 +28,8 @@ export class UpdatePostDto {
     example: 'Post name',
   })
   @IsString()
+  @IsNotEmpty()
+  @IsOptional()
   public name?: string;
 
   @ApiProperty({
@@ -33,6 +38,8 @@ export class UpdatePostDto {
     example: 'https://www.youtube.com/watch?v=6n3pFFPSlW4',
   })
   @IsString()
+  @IsNotEmpty()
+  @IsOptional()
   public videoUrl?: string;
 
   @ApiProperty({
@@ -41,6 +48,8 @@ export class UpdatePostDto {
     example: 'Post text',
   })
   @IsString()
+  @IsNotEmpty()
+  @IsOptional()
   public text?: string;
 
   @ApiProperty({
@@ -49,6 +58,8 @@ export class UpdatePostDto {
     example: 'Post anons text',
   })
   @IsString()
+  @IsNotEmpty()
+  @IsOptional()
   public anonsText?: string;
 
   @ApiProperty({
@@ -57,6 +68,8 @@ export class UpdatePostDto {
     example: 'Post quote',
   })
   @IsString()
+  @IsNotEmpty()
+  @IsOptional()
   public quote?: string;
 
   @ApiProperty({
@@ -65,6 +78,8 @@ export class UpdatePostDto {
     example: 'Post quote author',
   })
   @IsString()
+  @IsNotEmpty()
+  @IsOptional()
   public quoteAuthor?: string;
 
   @ApiProperty({
@@ -73,6 +88,8 @@ export class UpdatePostDto {
     example: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
   })
   @IsString()
+  @IsNotEmpty()
+  @IsOptional()
   public imageUrl?: string;
 
   @ApiProperty({
@@ -81,6 +98,8 @@ export class UpdatePostDto {
     example: 'https://www.google.com/',
   })
   @IsString()
+  @IsNotEmpty()
+  @IsOptional()
   public linkUrl?: string;
 
   @ApiProperty({
@@ -89,5 +108,7 @@ export class UpdatePostDto {
     example: 'Post link description',
   })
   @IsString()
+  @IsNotEmpty()
+  @IsOptional()
   public description?: string;
 }
