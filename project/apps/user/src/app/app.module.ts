@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { ConfigUserModule, getMongooseOptions } from '@project/shared/config';
+import { ConfigUserModule, getNotifyMongooseOptions } from '@project/shared/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
@@ -9,7 +9,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     AuthModule,
     UserModule,
     ConfigUserModule,
-    MongooseModule.forRootAsync(getMongooseOptions()),
+    MongooseModule.forRootAsync(getNotifyMongooseOptions()),
   ],
   controllers: [],
   providers: [],

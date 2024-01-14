@@ -8,3 +8,4 @@ export * from './lib/file-vault.enum';
 export * from './lib/post-type.enum';
 export * from './lib/token.interface';
 export * from './lib/subscriber.interface';
+export * from './lib/rabbit-routing.enum';

@@ -9,3 +9,6 @@ export * from './lib/jwt/get-jwt-options';
 export * from './lib/jwt/jwt.config';
 export { default as FileUploaderConfig } from './lib/file/file-uploader.config';
 export * from './lib/file/get-file-mongo-options';
+export { default as notifyConfig } from './lib/notify/notify.config';
+export * from './lib/notify/get-notify-mongoose-options';
+export * from './lib/config-notify.module';
