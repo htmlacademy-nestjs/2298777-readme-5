@@ -20,11 +20,15 @@ import { MongoIdValidationPipe } from '@project/shared/pipes';
 import { JWTAuthGuard } from './guards/jwt-auth.guard';
 import { Request } from 'express';
 import { TokenPayload } from '@project/shared/types';
+import { NotifyService } from '../notify/notify.service';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly notifyService: NotifyService
+  ) {}
 
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -38,6 +42,11 @@ export class AuthController {
   public async register(@Body() dto: CreateUserDto) {
     const newUser = await this.authService.register(dto);
     const userToken = await this.authService.createUserToken(newUser);
+    await this.notifyService.registerSubscriber({
+      email: newUser.email,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+    });
     return fillDto(UserRdo, { ...newUser.toPojo(), ...userToken });
   }
 

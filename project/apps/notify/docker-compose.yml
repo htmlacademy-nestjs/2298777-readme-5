@@ -1,0 +1,51 @@
+version: '3.9'
+services:
+  readme.notify.fakesmtp:
+    image: gessnerfl/fake-smtp-server:2.2.0
+    container_name: readme.notify.fakesmtp
+    hostname: readme.notify.fakesmtp
+    ports:
+      - 8025:8025
+      - 1083:8080
+  readme.notify.rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: readme.notify.rabbitmq
+
+    ports:
+      - 1088:15672
+      - 5672:5672
+
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  readme.notify.mongodb:
+    image: mongo:4.4
+    restart: always
+    container_name: readme.notify.mongodb
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
+
+    ports:
+      - 27019:27017
+
+    volumes:
+      - readme.mongodb.notify:/data/db
+
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27019/${MONGODB_DATABASE} --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  readme.mongodb.notify:
