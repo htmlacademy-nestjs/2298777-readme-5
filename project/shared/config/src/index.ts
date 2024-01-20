@@ -12,3 +12,8 @@ export * from './lib/file/get-file-mongo-options';
 export { default as notifyConfig } from './lib/notify/notify.config';
 export * from './lib/notify/get-notify-mongoose-options';
 export * from './lib/config-notify.module';
+export * from './lib/rabbitmq/brokers';
+export { default as rabbitConfig } from './lib/rabbitmq/rabbit.config';
+export * from './lib/mail/get-mail-config';
+export * from './lib/user/get-user-mongoose-options';
+export { default as userConfig } from './lib/user/user.config';

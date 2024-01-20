@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { MongooseModuleAsyncOptions } from '@nestjs/mongoose';
 import { getMongoConnectionUri } from '@project/shared/utils';
 
-export const getMongooseOptions = (): MongooseModuleAsyncOptions => {
+export const getUserMongooseOptions = (): MongooseModuleAsyncOptions => {
   return {
     useFactory: async (config: ConfigService) => {
       return {

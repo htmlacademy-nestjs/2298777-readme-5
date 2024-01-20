@@ -27,6 +27,7 @@ services:
 
   readme.notify.mongodb:
     image: mongo:4.4
+    restart: always
     container_name: readme.notify.mongodb
 
     environment:
@@ -35,31 +36,16 @@ services:
       MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
 
     ports:
-      - ${MONGO_PORT}:27017
+      - 27019:27017
 
     volumes:
-      - readme.notify.mongodb:/data/db
+      - readme.mongodb.notify:/data/db
 
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:${MONGODB_PORT}/${MONGODB_DATABASE} --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27019/${MONGODB_DATABASE} --quiet
       interval: 10s
       timeout: 10s
       retries: 5
 
-  readme.notify.mongodb.ui:
-    image: mongo-express
-    restart: always
-    container_name: readme.notify.mongodb.ui
-
-    ports:
-      - 8084:8081
-
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGODB_USER}
-      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGODB_PASSWORD}
-      ME_CONFIG_BASICAUTH_USERNAME: ${MONGODB_USER}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGODB_PASSWORD}
-      ME_CONFIG_MONGODB_URL: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@readme.notify.mongodb:${MONGODB_PORT}/
-
 volumes:
-  readme.notify.mongodb:
+  readme.mongodb.notify:
