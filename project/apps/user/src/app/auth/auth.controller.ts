@@ -1,4 +1,14 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { fillDto } from '@project/shared/utils';
@@ -6,6 +16,10 @@ import { UserRdo } from './rdo/user.rdo';
 import { LoginUserDto } from './dto/login-user.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { MongoIdValidationPipe } from '@project/shared/pipes';
+import { JWTAuthGuard } from './guards/jwt-auth.guard';
+import { Request } from 'express';
+import { TokenPayload } from '@project/shared/types';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -23,7 +37,8 @@ export class AuthController {
   @Post('register')
   public async register(@Body() dto: CreateUserDto) {
     const newUser = await this.authService.register(dto);
-    return fillDto(UserRdo, newUser.toPojo());
+    const userToken = await this.authService.createUserToken(newUser);
+    return fillDto(UserRdo, { ...newUser.toPojo(), ...userToken });
   }
 
   @ApiResponse({
@@ -37,7 +52,8 @@ export class AuthController {
   @Post('login')
   public async login(@Body() dto: LoginUserDto) {
     const user = await this.authService.validateUser(dto);
-    return fillDto(UserRdo, user.toPojo());
+    const userToken = await this.authService.createUserToken(user);
+    return fillDto(UserRdo, { ...user.toPojo(), ...userToken });
   }
 
   @ApiResponse({
@@ -49,8 +65,9 @@ export class AuthController {
     status: HttpStatus.NOT_FOUND,
     description: 'User with this id does not exist',
   })
+  @UseGuards(JWTAuthGuard)
   @Get(':id')
-  public async getUser(@Param('id') id: string) {
+  public async getUser(@Param('id', MongoIdValidationPipe) id: string) {
     const user = await this.authService.getUser(id);
     return fillDto(UserRdo, user.toPojo());
   }
@@ -60,9 +77,11 @@ export class AuthController {
     status: HttpStatus.OK,
     description: 'User has been successfully updated',
   })
-  @Put(':id')
-  public async updatePassword(@Param('id') id: string, @Body() dto: UpdatePasswordDto) {
-    const user = await this.authService.updatePassword(id, dto);
+  @UseGuards(JWTAuthGuard)
+  @Put()
+  public async updatePassword(@Req() req: Request, @Body() dto: UpdatePasswordDto) {
+    const tokenPayload = req.user as TokenPayload;
+    const user = await this.authService.updatePassword(tokenPayload.id, dto);
     return fillDto(UserRdo, user.toPojo());
   }
 }

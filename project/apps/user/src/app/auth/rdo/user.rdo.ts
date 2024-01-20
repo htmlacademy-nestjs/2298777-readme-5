@@ -57,4 +57,11 @@ export class UserRdo {
   })
   @Expose()
   public subscribersCount: number;
+
+  @ApiProperty({
+    description: 'User token',
+    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
+  })
+  @Expose()
+  public accessToken: boolean;
 }

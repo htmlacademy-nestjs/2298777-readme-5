@@ -7,7 +7,7 @@ const ENVIRONMENT = ['development', 'production', 'test'] as const;
 type Environment = (typeof ENVIRONMENT)[number];
 
 export interface ApplicationConfig {
-  environment: string;
+  environment: Environment;
   port: number;
 }
 

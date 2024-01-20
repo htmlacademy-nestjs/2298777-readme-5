@@ -2,6 +2,7 @@ import { AuthUser } from '@project/shared/types';
 import { Entity } from '@project/shared/core';
 import { compare, genSalt, hash } from 'bcrypt';
 import { SALT_ROUNDS } from './user.constant';
+import { UserModel } from './user.model';
 
 export class UserEntity implements AuthUser, Entity<string> {
   public id?: string;
@@ -14,6 +15,7 @@ export class UserEntity implements AuthUser, Entity<string> {
   public passwordHash: string;
 
   constructor(user: AuthUser) {
+    this.id = user.id;
     this.email = user.email;
     this.firstName = user.firstName;
     this.lastName = user.lastName;
@@ -45,7 +47,16 @@ export class UserEntity implements AuthUser, Entity<string> {
     return compare(password, this.passwordHash);
   }
 
-  static fromObject(user: AuthUser): UserEntity {
-    return new UserEntity(user);
+  static fromObject(user: UserModel): UserEntity {
+    return new UserEntity({
+      id: user._id.toString(),
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      avatar: user.avatar,
+      publicationsCount: user.publicationsCount,
+      subscribersCount: user.subscribersCount,
+      passwordHash: user.passwordHash,
+    });
   }
 }

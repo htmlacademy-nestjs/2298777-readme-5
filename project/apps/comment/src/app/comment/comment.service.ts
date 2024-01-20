@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CommentRepository } from './comment.repository';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentEntity } from './comment.entity';
 import { NUMBER_OF_FETCHED_COMMENTS } from './comment.constant';
+import { Err } from 'joi';
 
 @Injectable()
 export class CommentService {
@@ -10,20 +11,37 @@ export class CommentService {
 
   public async getCommentsByPostId(postId: string, next: number) {
     const start = next * NUMBER_OF_FETCHED_COMMENTS;
-    const end = start + NUMBER_OF_FETCHED_COMMENTS;
-    const comments = await this.commentRepository.getCommentsByPostId(postId);
-    return comments.slice(start, end);
+    const comments = await this.commentRepository.getCommentsByPostId(
+      postId,
+      NUMBER_OF_FETCHED_COMMENTS,
+      start
+    );
+    return comments;
   }
 
   public async createComment(comment: CreateCommentDto) {
     const commentEntity = new CommentEntity({
       ...comment,
-      date: new Date(),
+      createdAt: new Date(),
     });
-    return await this.commentRepository.save(commentEntity);
+    try {
+      const newComment = await this.commentRepository.save(commentEntity);
+      return newComment;
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message.includes('Foreign key')) {
+        throw new BadRequestException('Post not found');
+      }
+    }
   }
 
   public async deleteComment(id: string) {
-    return await this.commentRepository.deleteById(id);
+    try {
+      const deletedComment = await this.commentRepository.deleteById(id);
+      return deletedComment;
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message.includes('Record to delete does not exist')) {
+        throw new BadRequestException('Comment not found');
+      }
+    }
   }
 }

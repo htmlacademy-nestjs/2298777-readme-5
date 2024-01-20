@@ -1,7 +1,11 @@
 import { ResultingPost } from '@project/shared/types';
 import { BasePostEntity } from './base-post.entity';
+import { Entity } from '@project/shared/core';
 
-export class ResultPostEntity extends BasePostEntity implements ResultingPost {
+export class ResultPostEntity
+  extends BasePostEntity
+  implements ResultingPost, Entity<string, ResultingPost>
+{
   public name?: string;
   public videoUrl?: string;
   public text?: string;

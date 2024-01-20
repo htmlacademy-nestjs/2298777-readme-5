@@ -8,37 +8,43 @@ import {
   VideoPostRepository,
 } from './repository';
 import { PostRepository } from './repository/post.repository';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { PrismaClientModule, PrismaClientService } from '@project/shared/blog/models';
+import { TagModule } from '../tag/tag.module';
 @Module({
   exports: [PostRepositoryService],
   providers: [
     PostRepositoryService,
     {
       provide: PostRepository,
-      useFactory: () => new PostRepository(prisma.post),
+      useFactory: (prisma: PrismaClientService) => new PostRepository(prisma.post),
+      inject: [PrismaClientService],
     },
     {
       provide: ImagePostRepository,
-      useFactory: () => new ImagePostRepository(prisma.imagePost),
+      useFactory: (prisma: PrismaClientService) => new ImagePostRepository(prisma.imagePost),
+      inject: [PrismaClientService],
     },
     {
       provide: LinkPostRepository,
-      useFactory: () => new LinkPostRepository(prisma.linkPost),
+      useFactory: (prisma: PrismaClientService) => new LinkPostRepository(prisma.linkPost),
+      inject: [PrismaClientService],
     },
     {
       provide: VideoPostRepository,
-      useFactory: () => new VideoPostRepository(prisma.videoPost),
+      useFactory: (prisma: PrismaClientService) => new VideoPostRepository(prisma.videoPost),
+      inject: [PrismaClientService],
     },
     {
       provide: QuotePostRepository,
-      useFactory: () => new QuotePostRepository(prisma.quotePost),
+      useFactory: (prisma: PrismaClientService) => new QuotePostRepository(prisma.quotePost),
+      inject: [PrismaClientService],
     },
     {
       provide: TextPostRepository,
-      useFactory: () => new TextPostRepository(prisma.textPost),
+      useFactory: (prisma: PrismaClientService) => new TextPostRepository(prisma.textPost),
+      inject: [PrismaClientService],
     },
   ],
+  imports: [PrismaClientModule, TagModule],
 })
 export class PostModule {}

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
 
 export class CreateCommentDto {
   @ApiProperty({
@@ -6,6 +7,7 @@ export class CreateCommentDto {
     example: '1',
     type: String,
   })
+  @IsString()
   public postId: string;
 
   @ApiProperty({
@@ -13,6 +15,7 @@ export class CreateCommentDto {
     example: 'This is a comment',
     type: String,
   })
+  @IsString()
   public text: string;
 
   @ApiProperty({
@@ -20,5 +23,6 @@ export class CreateCommentDto {
     example: '1',
     type: String,
   })
+  @IsString()
   public authorId: string;
 }

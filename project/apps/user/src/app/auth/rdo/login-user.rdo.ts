@@ -32,6 +32,13 @@ export class LoginUserRdo {
 
   @ApiProperty({
     description: 'User avatar',
+    example: '',
+  })
+  @Expose()
+  public avatar: string;
+
+  @ApiProperty({
+    description: 'User token',
     example: 'fdsfdsfds',
   })
   @Expose()

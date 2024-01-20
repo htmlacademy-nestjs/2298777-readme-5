@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Post } from '@nestjs/common';
 import {
   ImagePostRepository,
   LinkPostRepository,
@@ -11,6 +11,9 @@ import { PostEntity } from '../blog/blog.types';
 import { PostType, ResultingPost } from '@project/shared/types';
 import { BasePostEntity } from './entities';
 import { ResultPostEntity } from './entities/result-post.entity';
+import { filterOptions } from '../blog/filter-option.enum';
+import { TagRepository } from '../tag/tag.repository';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PostRepositoryService {
@@ -20,11 +23,21 @@ export class PostRepositoryService {
     private readonly quotePostRepository: QuotePostRepository,
     private readonly textPostRepository: TextPostRepository,
     private readonly imagePostRepository: ImagePostRepository,
-    private readonly postRepository: PostRepository
+    private readonly postRepository: PostRepository,
+    private readonly tagRepository: TagRepository
   ) {}
 
   public async findById(id: string) {
-    const post = await this.postRepository.findFirst({ where: { id } });
+    const post = await this.postRepository.findFirst({
+      where: { id },
+      include: {
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
+      },
+    });
 
     if (!post) {
       return null;
@@ -36,6 +49,7 @@ export class PostRepositoryService {
     return ResultPostEntity.fromObject({
       ...post,
       ...typedPost,
+      tags: post.tags.map((tag) => tag.tag.name),
     });
   }
 
@@ -88,7 +102,19 @@ export class PostRepositoryService {
   }
 
   public async update<T extends PostEntity>(basePost: BasePostEntity, post?: T) {
+    await this.tagRepository.detachTagsFromPosts(basePost.id!);
+
     const updatedPost = await this.postRepository.update({
+      where: {
+        id: basePost.id,
+      },
+      include: {
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
+      },
       data: {
         authorId: basePost.authorId,
         updatedAt: basePost.updatedAt,
@@ -97,29 +123,25 @@ export class PostRepositoryService {
         likesCount: basePost.likesCount,
         commentsCount: basePost.commentsCount,
         tags: {
-          create: basePost.tags?.map((tag) => {
-            return {
-              tag: {
-                connectOrCreate: {
-                  where: {
-                    name: tag,
-                  },
-                  create: {
-                    name: tag,
-                  },
+          create: basePost.tags!.map((tag) => ({
+            tag: {
+              connectOrCreate: {
+                where: {
+                  name: tag,
                 },
+                create: { name: tag },
               },
-            };
-          }),
+            },
+          })),
         },
-      },
-      where: {
-        id: basePost.id,
       },
     });
 
     if (!post) {
-      return ResultPostEntity.fromObject(updatedPost as ResultingPost);
+      return ResultPostEntity.fromObject({
+        ...updatedPost,
+        tags: updatedPost.tags.map((tag) => tag.tag.name),
+      } as ResultingPost);
     }
 
     const repository = this.getRepositoryByType(basePost.type);
@@ -131,13 +153,35 @@ export class PostRepositoryService {
     return ResultPostEntity.fromObject({
       ...updatedPost,
       ...typedPost,
+      tags: updatedPost.tags.map((tag) => tag.tag.name),
     });
   }
 
-  public async getPosts(count: number, offset: number) {
+  public async getPosts(count: number, offset: number, filterOption: filterOptions) {
+    const orderBy: Prisma.PostOrderByWithAggregationInput = {};
+
+    switch (filterOption) {
+      case filterOptions.Like:
+        orderBy.likesCount = 'desc';
+        break;
+      case filterOptions.Popular:
+        orderBy.commentsCount = 'desc';
+        break;
+      default:
+        orderBy.createdAt = 'desc';
+        break;
+    }
+
     const posts = await this.postRepository.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy,
       take: count,
+      include: {
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
+      },
       skip: offset,
     });
 
@@ -149,6 +193,7 @@ export class PostRepositoryService {
         return ResultPostEntity.fromObject({
           ...post,
           ...typedPost,
+          tags: post.tags.map((tag) => tag.tag.name),
         });
       })
     );

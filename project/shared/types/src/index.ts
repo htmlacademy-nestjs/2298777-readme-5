@@ -6,3 +6,4 @@ export * from './lib/like.interface';
 export * from './lib/file-vault.interface';
 export * from './lib/file-vault.enum';
 export * from './lib/post-type.enum';
+export * from './lib/token.interface';
