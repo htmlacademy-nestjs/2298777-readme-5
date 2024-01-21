@@ -32,3 +32,8 @@ Content-Type: application/json
   "oldPassword": "123",
   "newPassword": "123"
 }
+
+###
+
+POST http://localhost:3000/api/auth/refresh HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMxNDAwOWQwZmI4NWZmNmNjOTMyZCIsImVtYWlsIjoiY2J2QGdtYWlsLmNvbSIsImZpcnN0TmFtZSI6ImJvZ25hIiwibGFzdE5hbWUiOiJib2duYSIsImF2YXRhciI6IiIsImlhdCI6MTcwNDc4NjM2MywiZXhwIjoxNzA0ODcyNzYzfQ.mPwH1vZVvHkVDg6adXuP83TWEmH3DZPHWPd7xEo8F60

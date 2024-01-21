@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   HttpStatus,
   Param,
   Post,
@@ -21,6 +22,13 @@ import { JWTAuthGuard } from './guards/jwt-auth.guard';
 import { Request } from 'express';
 import { TokenPayload } from '@project/shared/types';
 import { NotifyService } from '../notify/notify.service';
+import { UserEntity } from '../user/user.entity';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+
+interface RequestWithUser {
+  user?: UserEntity;
+}
 
 @ApiTags('auth')
 @Controller('auth')
@@ -58,11 +66,11 @@ export class AuthController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Invalid credentials',
   })
+  @UseGuards(LocalAuthGuard)
   @Post('login')
-  public async login(@Body() dto: LoginUserDto) {
-    const user = await this.authService.validateUser(dto);
-    const userToken = await this.authService.createUserToken(user);
-    return fillDto(UserRdo, { ...user.toPojo(), ...userToken });
+  public async login(@Req() { user }: RequestWithUser) {
+    const userToken = await this.authService.createUserToken(user!);
+    return fillDto(UserRdo, { ...user?.toPojo(), ...userToken });
   }
 
   @ApiResponse({
@@ -92,5 +100,16 @@ export class AuthController {
     const tokenPayload = req.user as TokenPayload;
     const user = await this.authService.updatePassword(tokenPayload.id, dto);
     return fillDto(UserRdo, user.toPojo());
+  }
+
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Get new access token',
+  })
+  @UseGuards(JwtRefreshGuard)
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  public async refreshToken(@Req() { user }: RequestWithUser) {
+    this.authService.createUserToken(user!);
   }
 }

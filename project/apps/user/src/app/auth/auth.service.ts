@@ -16,6 +16,8 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { EmailFinderRepository } from '@project/shared/core';
 import { UserRepositoryToken } from '../user/user.token';
 import { JwtService } from '@nestjs/jwt';
+import jwtConfig from 'shared/config/src/lib/jwt/jwt.config';
+import { ConfigType } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +26,9 @@ export class AuthService {
   constructor(
     @Inject(UserRepositoryToken)
     private readonly userRepository: EmailFinderRepository<UserEntity>,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    @Inject(jwtConfig.KEY)
+    private readonly jwtOptions: ConfigType<typeof jwtConfig>
   ) {}
 
   public async register(dto: CreateUserDto) {
@@ -104,7 +108,12 @@ export class AuthService {
 
     try {
       const accessToken = await this.jwtService.signAsync(payload);
-      return { accessToken };
+      const refreshToken = await this.jwtService.signAsync(payload, {
+        secret: this.jwtOptions.refreshTokenSecret,
+        expiresIn: this.jwtOptions.refreshTokenExpiresIn,
+      });
+
+      return { accessToken, refreshToken };
     } catch (error) {
       this.logger.error(`Error while creating access token: ${(error as Error).message}`);
       throw new HttpException(
@@ -112,5 +121,15 @@ export class AuthService {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  public async getUserByEmail(email: string) {
+    const user = await this.userRepository.findByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException('User with this email does not exist');
+    }
+
+    return user;
   }
 }
