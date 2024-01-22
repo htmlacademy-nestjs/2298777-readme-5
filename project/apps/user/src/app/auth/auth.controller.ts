@@ -25,6 +25,7 @@ import { NotifyService } from '../notify/notify.service';
 import { UserEntity } from '../user/user.entity';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { LoginUserRdo } from './rdo/login-user.rdo';
 
 interface RequestWithUser {
   user?: UserEntity;
@@ -70,7 +71,9 @@ export class AuthController {
   @Post('login')
   public async login(@Req() { user }: RequestWithUser) {
     const userToken = await this.authService.createUserToken(user!);
-    return fillDto(UserRdo, { ...user?.toPojo(), ...userToken });
+    console.log(userToken);
+    console.log({ ...user?.toPojo(), ...userToken });
+    return fillDto(LoginUserRdo, { ...user?.toPojo(), ...userToken });
   }
 
   @ApiResponse({
@@ -110,6 +113,6 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   public async refreshToken(@Req() { user }: RequestWithUser) {
-    this.authService.createUserToken(user!);
+    return this.authService.createUserToken(user!);
   }
 }

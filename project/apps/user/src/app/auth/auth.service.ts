@@ -1,7 +1,5 @@
 import {
   ConflictException,
-  HttpException,
-  HttpStatus,
   Inject,
   Injectable,
   Logger,
@@ -9,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthUser, Token, TokenPayload } from '@project/shared/types';
+import { AuthUser, Token } from '@project/shared/types';
 import { UserEntity } from '../user/user.entity';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -18,6 +16,9 @@ import { UserRepositoryToken } from '../user/user.token';
 import { JwtService } from '@nestjs/jwt';
 import jwtConfig from 'shared/config/src/lib/jwt/jwt.config';
 import { ConfigType } from '@nestjs/config';
+import { RefreshTokenService } from '../refresh-token/refresh-token.service';
+import { createJwtPayload } from '@project/shared/utils';
+import * as crypto from 'node:crypto';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +29,8 @@ export class AuthService {
     private readonly userRepository: EmailFinderRepository<UserEntity>,
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
-    private readonly jwtOptions: ConfigType<typeof jwtConfig>
+    private readonly jwtOptions: ConfigType<typeof jwtConfig>,
+    private readonly refreshTokenService: RefreshTokenService
   ) {}
 
   public async register(dto: CreateUserDto) {
@@ -98,29 +100,17 @@ export class AuthService {
   }
 
   public async createUserToken(user: AuthUser): Promise<Token> {
-    const payload: TokenPayload = {
-      id: user.id!,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      avatar: user.avatar,
-    };
+    const accessToken = createJwtPayload(user);
+    const refreshTokenPayload = { ...accessToken, tokenId: crypto.randomUUID() };
+    await this.refreshTokenService.createRefreshToken(refreshTokenPayload);
 
-    try {
-      const accessToken = await this.jwtService.signAsync(payload);
-      const refreshToken = await this.jwtService.signAsync(payload, {
+    return {
+      accessToken: await this.jwtService.signAsync(accessToken),
+      refreshToken: await this.jwtService.signAsync(refreshTokenPayload, {
         secret: this.jwtOptions.refreshTokenSecret,
         expiresIn: this.jwtOptions.refreshTokenExpiresIn,
-      });
-
-      return { accessToken, refreshToken };
-    } catch (error) {
-      this.logger.error(`Error while creating access token: ${(error as Error).message}`);
-      throw new HttpException(
-        'Error while creating access token',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
+      }),
+    };
   }
 
   public async getUserByEmail(email: string) {
