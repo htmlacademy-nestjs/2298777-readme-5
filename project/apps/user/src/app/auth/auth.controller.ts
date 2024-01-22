@@ -14,7 +14,6 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { fillDto } from '@project/shared/utils';
 import { UserRdo } from './rdo/user.rdo';
-import { LoginUserDto } from './dto/login-user.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { MongoIdValidationPipe } from '@project/shared/pipes';
