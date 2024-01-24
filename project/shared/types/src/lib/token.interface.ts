@@ -22,3 +22,7 @@ export interface TokenWithId {
 export interface RefreshTokenPayload extends TokenPayload {
   tokenId: string;
 }
+
+export interface RequestWithTokenPayload {
+  user?: TokenWithId;
+}

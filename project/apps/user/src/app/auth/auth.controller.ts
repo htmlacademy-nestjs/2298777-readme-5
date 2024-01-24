@@ -19,7 +19,7 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { MongoIdValidationPipe } from '@project/shared/pipes';
 import { JWTAuthGuard } from './guards/jwt-auth.guard';
 import { Request } from 'express';
-import { TokenPayload } from '@project/shared/types';
+import { RequestWithTokenPayload, TokenPayload } from '@project/shared/types';
 import { NotifyService } from '../notify/notify.service';
 import { UserEntity } from '../user/user.entity';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -113,5 +113,11 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   public async refreshToken(@Req() { user }: RequestWithUser) {
     return this.authService.createUserToken(user!);
+  }
+
+  @UseGuards(JWTAuthGuard)
+  @Post('check')
+  public async checkToken(@Req() { user: payload }: RequestWithTokenPayload) {
+    return payload;
   }
 }
