@@ -70,7 +70,7 @@ GET http://localhost:3001/api/blog/11210961-3aee-4501-a2e4-4005f2018772 HTTP/1.1
 
 ###
 
-DELETE http://localhost:3001/api/blog/e62c738e-2bd0-4c23-817a-5aa364173c2e HTTP/1.1
+DELETE http://localhost:3001/api/blog/a22c6316-c042-4b47-8670-8cf931d49fb9 HTTP/1.1
 
 ###
 

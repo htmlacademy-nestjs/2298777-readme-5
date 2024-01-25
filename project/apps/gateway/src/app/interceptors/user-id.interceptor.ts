@@ -1,10 +1,10 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 
 @Injectable()
-export class UseridInterceptor implements NestInterceptor {
+export class UserIdInterceptor implements NestInterceptor {
   public intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest();
-    request.body['userId'] = request.user.sub;
+    request.body['authorId'] = request.user.id;
 
     return next.handle();
   }

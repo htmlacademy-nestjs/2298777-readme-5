@@ -76,10 +76,14 @@ export class BlogService {
     return post;
   }
 
-  public async deletePost(id: string) {
+  public async deletePost(id: string, authorId: string) {
+    console.log(id, authorId);
     const post = await this.postRepository.findById(id);
     if (!post) {
       throw new BadRequestException('Post not found');
+    }
+    if (post.authorId !== authorId) {
+      throw new BadRequestException('You are not author of this post');
     }
     await this.postRepository.deleteById(id);
     return;
@@ -87,6 +91,9 @@ export class BlogService {
 
   public async updatePost(id: string, updatedPost: UpdatePostDto) {
     const post = await this.postRepository.findById(id);
+    if (updatedPost.authorId !== post?.authorId) {
+      throw new BadRequestException('You are not author of this post');
+    }
     if (!post) {
       throw new BadRequestException('Post not found');
     }

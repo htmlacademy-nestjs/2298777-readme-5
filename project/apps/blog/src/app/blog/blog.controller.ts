@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { filterOptions } from './filter-option.enum';
@@ -18,6 +19,7 @@ import { ApiResponse } from '@nestjs/swagger';
 import { PostType } from '@project/shared/types';
 import { DEFAULT_FETCHED_POSTS } from './blog.const';
 import { PostDto } from './blog.types';
+import { Request } from 'express';
 
 @Controller('blog')
 export class BlogController {
@@ -77,8 +79,8 @@ export class BlogController {
     description: 'Post have been successfully deleted',
   })
   @Delete(':id')
-  public async deletePost(@Param('id') id: string) {
-    await this.blogService.deletePost(id);
+  public async deletePost(@Param('id') id: string, @Req() req: Request) {
+    await this.blogService.deletePost(id, req.headers['x-author-id'] as string);
     return 'successfully deleted';
   }
 

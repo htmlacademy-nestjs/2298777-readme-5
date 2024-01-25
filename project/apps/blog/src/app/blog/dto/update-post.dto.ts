@@ -111,4 +111,6 @@ export class UpdatePostDto {
   @IsNotEmpty()
   @IsOptional()
   public description?: string;
+
+  public authorId: string;
 }
