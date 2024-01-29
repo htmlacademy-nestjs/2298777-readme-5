@@ -13,4 +13,4 @@ Content-Type: application/json
 
 ###
 
-DELETE  http://localhost:3002/api/comment/572bd7ef-a4d5-456b-b05b-e814652d03fb HTTP/1.1
+DELETE  http://localhost:3002/api/comment/c8e59928-5037-453b-9ef1-9c02b0d24d2c HTTP/1.1

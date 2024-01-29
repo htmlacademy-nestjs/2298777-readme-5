@@ -1,0 +1,23 @@
+POST http://localhost:3001/api/subscribe
+Content-Type: application/json
+
+{
+  "authorId": "2",
+  "userId": "4"
+}
+
+###
+
+DELETE http://localhost:3001/api/subscribe/1/2
+
+###
+
+GET http://localhost:3001/api/subscribe/count/2
+
+###
+
+GET http://localhost:3001/api/subscribe/subscribers/2
+
+###
+
+GET http://localhost:3001/api/subscribe/subscribed/4

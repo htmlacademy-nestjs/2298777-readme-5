@@ -29,11 +29,11 @@ export class CommentRepository extends createDecoratorProxy<Prisma.CommentDelega
     return CommentEntity.fromObject(deletedComment);
   }
 
-  public async getCommentsByPostId(postId: string, take?: number, skip?: number) {
+  public async getCommentsByPostId(postId: string, take: number, skip: number) {
     const comments = await this.findMany({
       where: { postId },
       take,
-      skip: skip || 0,
+      skip,
       orderBy: { createdAt: 'desc' },
     });
     return comments.map((comment) => CommentEntity.fromObject(comment));

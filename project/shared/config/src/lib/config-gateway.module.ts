@@ -1,18 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import appConfig from './app/app.config';
-import rabbitConfig from './rabbitmq/rabbit.config';
 
-const ENV_COMMENT_FILE_PATH = 'apps/comment/.env';
+const ENV_GATEWAY_FILE_PATH = 'apps/gateway/.env';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       cache: false,
-      load: [appConfig, rabbitConfig],
-      envFilePath: ENV_COMMENT_FILE_PATH,
+      load: [appConfig],
+      envFilePath: ENV_GATEWAY_FILE_PATH,
     }),
   ],
 })
-export class ConfigCommentModule {}
+export class ConfigGatewayModule {}

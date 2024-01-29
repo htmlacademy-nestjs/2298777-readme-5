@@ -4,6 +4,8 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { fillDto } from '@project/shared/utils';
 import { CommentRdo } from './rdo/comment.rdo';
 import { ApiResponse } from '@nestjs/swagger';
+import { NUMBER_OF_FETCHED_COMMENTS } from './comment.constant';
+import { isNumber } from 'class-validator';
 
 @Controller('comment')
 export class CommentController {
@@ -14,8 +16,16 @@ export class CommentController {
     description: 'Get comments by post id',
   })
   @Get('post/:id')
-  public async getCommentsByPostId(@Param('id') id: string, @Query('next') next: number = 0) {
-    const comments = await this.commentService.getCommentsByPostId(id, next);
+  public async getCommentsByPostId(
+    @Param('id') id: string,
+    @Query() query: { next?: number; quantity?: number }
+  ) {
+    const { next, quantity } = query;
+    const comments = await this.commentService.getCommentsByPostId(
+      id,
+      isNumber(next) ? +next : 0,
+      isNumber(quantity) ? +quantity : NUMBER_OF_FETCHED_COMMENTS
+    );
     return fillDto(
       CommentRdo,
       comments.map((comment) => comment.toPojo())

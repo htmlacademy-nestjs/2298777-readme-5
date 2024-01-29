@@ -1,1 +1,2 @@
 export const DEFAULT_FETCHED_POSTS = 25;
+export const DEFAULT_FETCHED_SEARCH_POSTS = 20;

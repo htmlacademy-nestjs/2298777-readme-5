@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import appConfig from './app/app.config';
+import rabbitConfig from './rabbitmq/rabbit.config';
 
 const ENV_BLOG_FILE_PATH = 'apps/blog/.env';
 
@@ -9,7 +10,7 @@ const ENV_BLOG_FILE_PATH = 'apps/blog/.env';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: false,
-      load: [appConfig],
+      load: [appConfig, rabbitConfig],
       envFilePath: ENV_BLOG_FILE_PATH,
     }),
   ],

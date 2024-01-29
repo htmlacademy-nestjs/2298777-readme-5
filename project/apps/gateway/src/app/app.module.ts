@@ -5,6 +5,9 @@ import { HttpModule } from '@nestjs/axios';
 import { HTTP_CLIENT_MAX_REDIRECTS, HTTP_CLIENT_TIMEOUT } from './app.config';
 import { CheckAuthGuard } from './guards/check-auth.guard';
 import { FileController } from './file.controller';
+import { CommentController } from './comment.controller';
+import { ConfigGatewayModule } from '@project/shared/config';
+import { SubscribeController } from './subscribe.controller';
 
 @Module({
   imports: [
@@ -12,8 +15,15 @@ import { FileController } from './file.controller';
       timeout: HTTP_CLIENT_TIMEOUT,
       maxRedirects: HTTP_CLIENT_MAX_REDIRECTS,
     }),
+    ConfigGatewayModule,
   ],
-  controllers: [BlogController, UserController, FileController],
+  controllers: [
+    BlogController,
+    UserController,
+    FileController,
+    CommentController,
+    SubscribeController,
+  ],
   providers: [CheckAuthGuard],
 })
 export class AppModule {}

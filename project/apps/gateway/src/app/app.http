@@ -14,13 +14,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YWU4ODQ4N
 ###
 
 POST http://localhost:3006/api/blog/quote
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMyNzIyMDk0OWIzMjRjNTg4MWU1MCIsImVtYWlsIjoiY2J2ZEBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJib2duYSIsImxhc3ROYW1lIjoiYm9nbmEiLCJhdmF0YXIiOiIiLCJpYXQiOjE3MDYxNzM2MzYsImV4cCI6MTcwNjI2MDAzNn0.K9FlFQJY1ELnaYVwx4I5kr60mpxkxfljzLTi2QocLhE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMyNzIyMDk0OWIzMjRjNTg4MWU1MCIsImVtYWlsIjoiY2J2ZEBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJib2duYSIsImxhc3ROYW1lIjoiYm9nbmEiLCJhdmF0YXIiOiIiLCJpYXQiOjE3MDY0NTc0OTgsImV4cCI6MTcwNjU0Mzg5OH0.CaViRPBtt956aG5ndVarSQpC0ct_zMPhXxBzAILKA4s
 Content-Type: application/json
 
 {
   "quote": "Quote content",
   "quoteAuthor": "Quote author",
-  "tags": ["tag1", "tag2"]
+  "tags": ["Tag1", "tag2", "tag3", "tag1", "TAg2", "TAG3"]
 }
 
 ###
@@ -36,12 +36,12 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3006/api/auth/65ae884870a462b792df1e55 HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YWU4ODQ4NzBhNDYyYjc5MmRmMWU1NSIsImVtYWlsIjoiYWJ1c0BnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJib2duYSIsImxhc3ROYW1lIjoiYm9nbmEiLCJhdmF0YXIiOiIiLCJpYXQiOjE3MDYxMTEzMDksImV4cCI6MTcwNjE5NzcwOX0.20V5WOALpZVSla99EKltBFIGH3AD2wGyQl_68HmBXJA
+GET http://localhost:3006/api/auth/659c14009d0fb85ff6cc932d HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMxNDAwOWQwZmI4NWZmNmNjOTMyZCIsImVtYWlsIjoiY2J2QGdtYWlsLmNvbSIsImZpcnN0TmFtZSI6ImJvZ25hIiwibGFzdE5hbWUiOiJib2duYSIsImF2YXRhciI6IiIsImlhdCI6MTcwNjQzNjI5MywiZXhwIjoxNzA2NTIyNjkzfQ.PYmAWPuflyAQoozraojN00YzcXPApCRcBIok3IBh-TQ
 
 ###
 
-GET http://localhost:3006/api/blog/11210961-3aee-4501-a2e4-4005f2018772 HTTP/1.1
+GET http://localhost:3006/api/blog/ef695d40-38a5-4843-adc9-2a6fbfe59adb HTTP/1.1
 
 ###
 
@@ -56,8 +56,8 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3006/api/blog/30a7f947-7700-470a-81d2-226716a26cdf HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMyNzIyMDk0OWIzMjRjNTg4MWU1MCIsImVtYWlsIjoiY2J2ZEBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJib2duYSIsImxhc3ROYW1lIjoiYm9nbmEiLCJhdmF0YXIiOiIiLCJpYXQiOjE3MDYxNzM2MzYsImV4cCI6MTcwNjI2MDAzNn0.K9FlFQJY1ELnaYVwx4I5kr60mpxkxfljzLTi2QocLhE
+DELETE http://localhost:3006/api/blog/a766b86e-fcca-4906-9144-7c0ffff598b5 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMxNDAwOWQwZmI4NWZmNmNjOTMyZCIsImVtYWlsIjoiY2J2QGdtYWlsLmNvbSIsImZpcnN0TmFtZSI6ImJvZ25hIiwibGFzdE5hbWUiOiJib2duYSIsImF2YXRhciI6IiIsImlhdCI6MTcwNjM2NjU4OCwiZXhwIjoxNzA2NDUyOTg4fQ.5Jk6QTSQz-r1vvp2HZIL7aFMYgZGds_C4c7f611e56E
 
 ###
 
@@ -75,3 +75,59 @@ Content-Type: image/png
 ###
 
 GET http://localhost:3006/api/file/65b27fb432513d404795dd3f HTTP/1.1
+
+###
+
+GET http://localhost:3006/api/comment/post/11210961-3aee-4501-a2e4-4005f2018772 HTTP/1.1
+
+###
+
+POST http://localhost:3006/api/comment HTTP/1.1
+Content-Type: application/json
+
+{
+    "postId": "09e18a17-6019-400a-a52f-ff00f87a2e08",
+    "text": "This is a comment",
+    "authorId": "1"
+}
+
+###
+
+DELETE  http://localhost:3006/api/comment/a861a54f-21ac-4835-acd4-2e6cf761ce5a HTTP/1.1
+
+###
+
+POST http://localhost:3006/api/blog/like/11210961-3aee-4501-a2e4-4005f2018772 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMxNDAwOWQwZmI4NWZmNmNjOTMyZCIsImVtYWlsIjoiY2J2QGdtYWlsLmNvbSIsImZpcnN0TmFtZSI6ImJvZ25hIiwibGFzdE5hbWUiOiJib2duYSIsImF2YXRhciI6IiIsImlhdCI6MTcwNjM1MTg5OCwiZXhwIjoxNzA2NDM4Mjk4fQ.SfZGTE40skzrAAs9KXg33L1dJueIATreovIuUDpKGrQ
+
+###
+
+GET http://localhost:3006/api/blog/subscribed/?next=0&quantity=10&filter=like HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMxNDAwOWQwZmI4NWZmNmNjOTMyZCIsImVtYWlsIjoiY2J2QGdtYWlsLmNvbSIsImZpcnN0TmFtZSI6ImJvZ25hIiwibGFzdE5hbWUiOiJib2duYSIsImF2YXRhciI6IiIsImlhdCI6MTcwNjM1MTg5OCwiZXhwIjoxNzA2NDM4Mjk4fQ.SfZGTE40skzrAAs9KXg33L1dJueIATreovIuUDpKGrQ
+
+###
+
+GET http://localhost:3006/api/subscribe/subscribed  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMxNDAwOWQwZmI4NWZmNmNjOTMyZCIsImVtYWlsIjoiY2J2QGdtYWlsLmNvbSIsImZpcnN0TmFtZSI6ImJvZ25hIiwibGFzdE5hbWUiOiJib2duYSIsImF2YXRhciI6IiIsImlhdCI6MTcwNjQ0MDcwNywiZXhwIjoxNzA2NTI3MTA3fQ.T7EuT2eBv37wfjfzObiwGhDBQ7Ku9oaDu4lh3qCInIE
+###
+
+POST http://localhost:3006/api/subscribe  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMyNzIyMDk0OWIzMjRjNTg4MWU1MCIsImVtYWlsIjoiY2J2ZEBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJib2duYSIsImxhc3ROYW1lIjoiYm9nbmEiLCJhdmF0YXIiOiIiLCJpYXQiOjE3MDY0NDEzNTAsImV4cCI6MTcwNjUyNzc1MH0.VAIJQDnhgh8Oq7YG7n8SZuQOidaKtdBi66B31dqBJqY
+Content-Type: application/json
+
+{
+  "authorId": "659c14009d0fb85ff6cc932d"
+}
+
+###
+
+DELETE http://localhost:3006/api/subscribe/659c14009d0fb85ff6cc932d HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMyNzIyMDk0OWIzMjRjNTg4MWU1MCIsImVtYWlsIjoiY2J2ZEBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJib2duYSIsImxhc3ROYW1lIjoiYm9nbmEiLCJhdmF0YXIiOiIiLCJpYXQiOjE3MDY0NDEzNTAsImV4cCI6MTcwNjUyNzc1MH0.VAIJQDnhgh8Oq7YG7n8SZuQOidaKtdBi66B31dqBJqY
+
+###
+
+GET http://localhost:3006/api/blog/?next=0&quantity=20&filter=popular HTTP/1.1
+
+###
+
+GET http://localhost:3006/api/blog/search/?words[]=Text&words[]=Video&next=0&quantity=10 HTTP/1.1

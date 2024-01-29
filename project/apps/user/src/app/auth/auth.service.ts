@@ -122,4 +122,37 @@ export class AuthService {
 
     return user;
   }
+
+  public async subscribeHandle(authorId: string, userId: string, method: string) {
+    const author = await this.userRepository.findById(authorId);
+    const user = await this.userRepository.findById(userId);
+
+    if (!author || !user) {
+      throw new NotFoundException('User with this id does not exist');
+    }
+
+    if (method === 'create') {
+      author.subscribersCount += 1;
+    } else if (method === 'delete') {
+      author.subscribersCount -= 1;
+    }
+
+    return this.userRepository.updateById(authorId, author);
+  }
+
+  public async postHandle(userId: string, method: string) {
+    const user = await this.userRepository.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User with this id does not exist');
+    }
+
+    if (method === 'create') {
+      user.publicationsCount += 1;
+    } else if (method === 'delete') {
+      user.publicationsCount -= 1;
+    }
+
+    return this.userRepository.updateById(userId, user);
+  }
 }

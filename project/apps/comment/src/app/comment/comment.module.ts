@@ -3,6 +3,8 @@ import { CommentController } from './comment.controller';
 import { CommentService } from './comment.service';
 import { CommentRepository } from './comment.repository';
 import { PrismaClientService, PrismaClientModule } from '@project/shared/blog/models';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { getRabbitMQOptions } from '@project/shared/config';
 
 @Module({
   controllers: [CommentController],
@@ -14,6 +16,9 @@ import { PrismaClientService, PrismaClientModule } from '@project/shared/blog/mo
       inject: [PrismaClientService],
     },
   ],
-  imports: [PrismaClientModule],
+  imports: [
+    PrismaClientModule,
+    RabbitMQModule.forRootAsync(RabbitMQModule, getRabbitMQOptions('rabbit')),
+  ],
 })
 export class CommentModule {}

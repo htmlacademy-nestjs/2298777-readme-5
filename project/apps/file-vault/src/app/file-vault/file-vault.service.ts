@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ensureDir } from 'fs-extra';
 import { ConfigType } from '@nestjs/config';
 import { writeFile } from 'fs/promises';
-import { FileUploaderConfig } from '@project/shared/config';
+import { fileUploaderConfig } from '@project/shared/config';
 import { join } from 'node:path';
 import 'multer';
 import dayjs from 'dayjs';
@@ -19,8 +19,8 @@ export class FileVaultService {
   constructor(
     @Inject(fileRepositoryToken)
     private readonly fileVaultRepository: FileVaultRepository,
-    @Inject(FileUploaderConfig.KEY)
-    private readonly applicationConfig: ConfigType<typeof FileUploaderConfig>
+    @Inject(fileUploaderConfig.KEY)
+    private readonly applicationConfig: ConfigType<typeof fileUploaderConfig>
   ) {}
 
   private getUploadDirectoryPath() {

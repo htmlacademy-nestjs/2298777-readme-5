@@ -60,6 +60,8 @@ export class PostRepositoryService {
         updatedAt: basePost.updatedAt,
         status: basePost.status,
         type: basePost.type,
+        originalAuthorId: basePost.originalAuthorId,
+        originalPostId: basePost.originalPostId,
         tags: {
           create: basePost.tags?.map((tag) => {
             return {
@@ -94,6 +96,7 @@ export class PostRepositoryService {
     return ResultPostEntity.fromObject({
       ...newPost,
       ...typedPost,
+      tags: basePost.tags,
     });
   }
 
@@ -157,20 +160,15 @@ export class PostRepositoryService {
     });
   }
 
-  public async getPosts(count: number, offset: number, filterOption: filterOptions) {
-    const orderBy: Prisma.PostOrderByWithAggregationInput = {};
-
-    switch (filterOption) {
-      case filterOptions.Like:
-        orderBy.likesCount = 'desc';
-        break;
-      case filterOptions.Popular:
-        orderBy.commentsCount = 'desc';
-        break;
-      default:
-        orderBy.createdAt = 'desc';
-        break;
-    }
+  public async getPosts(
+    count: number,
+    offset: number,
+    filterOption: filterOptions,
+    tags: string[]
+  ) {
+    const orderBy = this.getOrderBy(filterOption);
+    const where: Prisma.PostWhereInput =
+      tags.length > 0 ? { tags: { some: { tag: { name: { in: tags } } } } } : {};
 
     const posts = await this.postRepository.findMany({
       orderBy,
@@ -182,6 +180,7 @@ export class PostRepositoryService {
           },
         },
       },
+      where,
       skip: offset,
     });
 
@@ -195,6 +194,102 @@ export class PostRepositoryService {
           ...typedPost,
           tags: post.tags.map((tag) => tag.tag.name),
         });
+      })
+    );
+  }
+
+  public async getSubscribedPosts(
+    authorIds: string[],
+    skip: number,
+    take: number,
+    filterOption: filterOptions
+  ) {
+    const orderBy = this.getOrderBy(filterOption);
+
+    const posts = await this.postRepository.findMany({
+      where: {
+        authorId: {
+          in: authorIds,
+        },
+      },
+      orderBy,
+      take,
+      skip,
+      include: {
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
+      },
+    });
+
+    return await Promise.all(
+      posts.map(async (post) => {
+        const repository = this.getRepositoryByType(post.type as PostType);
+        const typedPost = await (repository.findFirst as any)({ where: { postId: post.id } });
+
+        return ResultPostEntity.fromObject({
+          ...post,
+          ...typedPost,
+          tags: post.tags.map((tag) => tag.tag.name),
+        });
+      })
+    );
+  }
+
+  public async findPostsByWords(words: string[], skip: number, take: number) {
+    const where = {
+      OR: words.map((word) => ({
+        name: {
+          contains: word,
+        },
+      })),
+    };
+
+    const videoPosts = await this.videoPostRepository.findMany({
+      where,
+    });
+
+    const textPosts = await this.textPostRepository.findMany({
+      where,
+    });
+
+    const postIds = [...videoPosts, ...textPosts].map((post) => post.postId);
+
+    const posts = await this.postRepository.findMany({
+      where: {
+        id: {
+          in: postIds,
+        },
+      },
+      take,
+      skip,
+      include: {
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
+      },
+    });
+
+    return await Promise.all(
+      posts.map((post) => {
+        const videoPost = videoPosts.find((videoPost) => videoPost.postId === post.id);
+        if (videoPost) {
+          return ResultPostEntity.fromObject({
+            ...post,
+            ...videoPost,
+            tags: post.tags.map((tag) => tag.tag.name),
+          } as ResultingPost);
+        }
+        const textPost = textPosts.find((textPost) => textPost.postId === post.id);
+        return ResultPostEntity.fromObject({
+          ...post,
+          ...textPost,
+          tags: post.tags.map((tag) => tag.tag.name),
+        } as ResultingPost);
       })
     );
   }
@@ -214,5 +309,23 @@ export class PostRepositoryService {
       default:
         throw new Error('Invalid post type');
     }
+  }
+
+  private getOrderBy(filterOption: filterOptions) {
+    const orderBy: Prisma.PostOrderByWithAggregationInput = {};
+
+    switch (filterOption) {
+      case filterOptions.Like:
+        orderBy.likesCount = 'desc';
+        break;
+      case filterOptions.Popular:
+        orderBy.commentsCount = 'desc';
+        break;
+      default:
+        orderBy.createdAt = 'desc';
+        break;
+    }
+
+    return orderBy;
   }
 }
