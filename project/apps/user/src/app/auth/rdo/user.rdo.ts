@@ -42,7 +42,7 @@ export class UserRdo {
     example: '2020-10-30T14:30:00.000Z',
   })
   @Expose()
-  public registerDate: Date;
+  public createdAt: Date;
 
   @ApiProperty({
     description: 'User publications count',

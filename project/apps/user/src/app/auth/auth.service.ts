@@ -1,7 +1,6 @@
 import {
+  BadRequestException,
   ConflictException,
-  HttpException,
-  HttpStatus,
   Inject,
   Injectable,
   Logger,
@@ -9,13 +8,18 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthUser, Token, TokenPayload } from '@project/shared/types';
+import { AuthUser, Token } from '@project/shared/types';
 import { UserEntity } from '../user/user.entity';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { EmailFinderRepository } from '@project/shared/core';
 import { UserRepositoryToken } from '../user/user.token';
 import { JwtService } from '@nestjs/jwt';
+import jwtConfig from 'shared/config/src/lib/jwt/jwt.config';
+import { ConfigType } from '@nestjs/config';
+import { RefreshTokenService } from '../refresh-token/refresh-token.service';
+import { createJwtPayload } from '@project/shared/utils';
+import * as crypto from 'node:crypto';
 
 @Injectable()
 export class AuthService {
@@ -24,11 +28,16 @@ export class AuthService {
   constructor(
     @Inject(UserRepositoryToken)
     private readonly userRepository: EmailFinderRepository<UserEntity>,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    @Inject(jwtConfig.KEY)
+    private readonly jwtOptions: ConfigType<typeof jwtConfig>,
+    private readonly refreshTokenService: RefreshTokenService
   ) {}
 
   public async register(dto: CreateUserDto) {
     const { email, password, firstName, lastName } = dto;
+
+    this.validateRegistrationData(dto);
 
     const user: AuthUser = {
       email,
@@ -78,6 +87,10 @@ export class AuthService {
   public async updatePassword(id: string, dto: UpdatePasswordDto) {
     const { oldPassword, newPassword } = dto;
 
+    if (newPassword.length < 6 || newPassword.length > 12) {
+      throw new BadRequestException('new password is too short or too long');
+    }
+
     const user = await this.userRepository.findById(id);
 
     if (!user) {
@@ -94,23 +107,82 @@ export class AuthService {
   }
 
   public async createUserToken(user: AuthUser): Promise<Token> {
-    const payload: TokenPayload = {
-      id: user.id!,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      avatar: user.avatar,
-    };
+    const accessToken = createJwtPayload(user);
+    const refreshTokenPayload = { ...accessToken, tokenId: crypto.randomUUID() };
+    await this.refreshTokenService.createRefreshToken(refreshTokenPayload);
 
-    try {
-      const accessToken = await this.jwtService.signAsync(payload);
-      return { accessToken };
-    } catch (error) {
-      this.logger.error(`Error while creating access token: ${(error as Error).message}`);
-      throw new HttpException(
-        'Error while creating access token',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
+    return {
+      accessToken: await this.jwtService.signAsync(accessToken),
+      refreshToken: await this.jwtService.signAsync(refreshTokenPayload, {
+        secret: this.jwtOptions.refreshTokenSecret,
+        expiresIn: this.jwtOptions.refreshTokenExpiresIn,
+      }),
+    };
+  }
+
+  public async getUserByEmail(email: string) {
+    const user = await this.userRepository.findByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException('User with this email does not exist');
+    }
+
+    return user;
+  }
+
+  public async subscribeHandle(authorId: string, userId: string, method: string) {
+    const author = await this.userRepository.findById(authorId);
+    const user = await this.userRepository.findById(userId);
+
+    if (!author || !user) {
+      throw new NotFoundException('User with this id does not exist');
+    }
+
+    if (method === 'create') {
+      author.subscribersCount += 1;
+    } else if (method === 'delete') {
+      author.subscribersCount -= 1;
+    }
+
+    return this.userRepository.updateById(authorId, author);
+  }
+
+  public async postHandle(userId: string, method: string) {
+    const user = await this.userRepository.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User with this id does not exist');
+    }
+
+    if (method === 'create') {
+      user.publicationsCount += 1;
+    } else if (method === 'delete') {
+      user.publicationsCount -= 1;
+    }
+
+    return this.userRepository.updateById(userId, user);
+  }
+
+  private validateRegistrationData(dto: CreateUserDto) {
+    const { password, firstName, lastName } = dto;
+
+    const validationErrors: string[] = [];
+
+    if (firstName.length < 3 || lastName.length < 3) {
+      validationErrors.push('First name or last name is too short');
+    }
+    if (firstName.length > 50 || lastName.length > 50) {
+      validationErrors.push('First name or last name is too long');
+    }
+    if (password.length < 6) {
+      validationErrors.push('Password is too short');
+    }
+    if (password.length > 12) {
+      validationErrors.push('Password is too long');
+    }
+
+    if (validationErrors.length) {
+      throw new BadRequestException(validationErrors);
     }
   }
 }

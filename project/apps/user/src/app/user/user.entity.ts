@@ -13,6 +13,7 @@ export class UserEntity implements AuthUser, Entity<string> {
   public publicationsCount: number;
   public subscribersCount: number;
   public passwordHash: string;
+  public createdAt?: Date;
 
   constructor(user: AuthUser) {
     this.id = user.id;
@@ -23,6 +24,7 @@ export class UserEntity implements AuthUser, Entity<string> {
     this.publicationsCount = user.publicationsCount;
     this.subscribersCount = user.subscribersCount;
     this.passwordHash = user.passwordHash;
+    this.createdAt = user.createdAt;
   }
 
   toPojo(): Record<string, unknown> {
@@ -34,6 +36,7 @@ export class UserEntity implements AuthUser, Entity<string> {
       avatar: this.avatar,
       publicationsCount: this.publicationsCount,
       subscribersCount: this.subscribersCount,
+      createdAt: this.createdAt,
     };
   }
 
@@ -48,15 +51,6 @@ export class UserEntity implements AuthUser, Entity<string> {
   }
 
   static fromObject(user: UserModel): UserEntity {
-    return new UserEntity({
-      id: user._id.toString(),
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      avatar: user.avatar,
-      publicationsCount: user.publicationsCount,
-      subscribersCount: user.subscribersCount,
-      passwordHash: user.passwordHash,
-    });
+    return new UserEntity(user);
   }
 }

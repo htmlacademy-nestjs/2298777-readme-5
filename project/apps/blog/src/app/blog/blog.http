@@ -1,4 +1,4 @@
-GET http://localhost:3001/api/blog/?filter=like HTTP/1.1
+GET http://localhost:3001/api/blog/?tags[]=tag3 HTTP/1.1
 
 ###
 
@@ -9,7 +9,7 @@ Content-Type: application/json
     "name": "Video Title",
     "videoUrl": "https://www.youtube.com/watch?v=BLo0lZHuy5w",
     "tags": ["tag1", "tag2"],
-    "authorId": "5f0b5b9b9b9b9b9b9b9b9b9b"
+    "authorId": "21"
 }
 
 ###
@@ -62,7 +62,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:3001/api/blog/like/5a55105b-ea94-4356-9708-08ea69257cef HTTP/1.1
+POST http://localhost:3001/api/blog/like/11210961-3aee-4501-a2e4-4005f2018772 HTTP/1.1
 
 ###
 
@@ -70,14 +70,32 @@ GET http://localhost:3001/api/blog/11210961-3aee-4501-a2e4-4005f2018772 HTTP/1.1
 
 ###
 
-DELETE http://localhost:3001/api/blog/e62c738e-2bd0-4c23-817a-5aa364173c2e HTTP/1.1
+DELETE http://localhost:3001/api/blog/a22c6316-c042-4b47-8670-8cf931d49fb9 HTTP/1.1
 
 ###
 
-PATCH http://localhost:3001/api/blog/5a55105b-ea94-4356-9708-08ea69257cef HTTP/1.1
+PATCH http://localhost:3001/api/blog/11210961-3aee-4501-a2e4-4005f2018772 HTTP/1.1
 Content-Type: application/json
 
 {
     "tags": ["tag1", "tag", "tag3"],
     "name": "l"
 }
+
+###
+
+PATCH http://localhost:3001/api/blog/repost
+Content-Type: application/json
+
+{
+    "postId": "11210961-3aee-4501-a2e4-4005f2018772",
+    "authorId": "5f0b5b9b9b9b9b9b9b9b9b9b"
+}
+
+###
+
+GET http://localhost:3001/api/blog/subscribed/?authorIds[]=0&authorIds[]=5f0b5b9b9b9b9b9b9b9b9b9b&next=0&quantity=10&filter=like HTTP/1.1
+
+###
+
+GET http://localhost:3001/api/blog/search/?words[]=text HTTP/1.1

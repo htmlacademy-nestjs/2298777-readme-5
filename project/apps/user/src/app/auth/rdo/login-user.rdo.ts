@@ -43,4 +43,11 @@ export class LoginUserRdo {
   })
   @Expose()
   public accessToken: string;
+
+  @ApiProperty({
+    description: 'User refresh token',
+    example: 'fdsfdsfds',
+  })
+  @Expose()
+  public refreshToken: string;
 }

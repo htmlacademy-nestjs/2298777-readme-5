@@ -118,6 +118,16 @@ model Comment {
   @@map("comments")
 }
 
+model Subscription {
+  id        String   @id @unique @default(uuid()) @map("id")
+  authorId  String   @map("author_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("subscriptions")
+}
+
 enum PostStatus {
   draft
   published

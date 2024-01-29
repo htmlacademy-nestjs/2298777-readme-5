@@ -1,6 +1,8 @@
 import { ClassTransformOptions, plainToInstance } from 'class-transformer';
+import { TokenPayload, User } from '@project/shared/types';
 
-type PlainObject = Record<string, unknown>;
+export type DateTimeUnit = 's' | 'h' | 'd' | 'm' | 'y';
+export type TimeAndUnit = { value: number; unit: DateTimeUnit };
 
 export function fillDto<T, V>(
   DtoClass: new () => T,
@@ -44,3 +46,30 @@ export const getRabbitMQConnectionString = (
   host: string,
   port: number
 ) => `amqp://${user}:${password}@${host}:${port}`;
+
+export const parseTime = (time: string): TimeAndUnit => {
+  const regex = /^(\d+)([shdmy])/;
+  const match = regex.exec(time);
+
+  if (!match) {
+    throw new Error('Invalid time format');
+  }
+
+  const [, valueRaw, unitRaw] = match;
+  const value = parseInt(valueRaw, 10);
+  const unit = unitRaw as DateTimeUnit;
+
+  if (isNaN(value)) {
+    throw new Error('Invalid time format');
+  }
+
+  return { value, unit };
+};
+
+export const createJwtPayload = (user: User): TokenPayload => ({
+  id: user.id!,
+  email: user.email,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  avatar: user.avatar,
+});

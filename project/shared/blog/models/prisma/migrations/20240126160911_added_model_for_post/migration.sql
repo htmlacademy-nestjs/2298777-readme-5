@@ -9,7 +9,7 @@ CREATE TABLE "posts" (
     "id" TEXT NOT NULL,
     "author_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3),
     "publish_date" TIMESTAMP(3),
     "status" "PostStatus" NOT NULL DEFAULT 'draft',
     "original_author_id" TEXT,
@@ -95,6 +95,17 @@ CREATE TABLE "comments" (
     CONSTRAINT "comments_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "subscriptions" (
+    "id" TEXT NOT NULL,
+    "author_id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "subscriptions_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "posts_id_key" ON "posts"("id");
 
@@ -127,6 +138,9 @@ CREATE UNIQUE INDEX "likes_id_key" ON "likes"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "comments_id_key" ON "comments"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "subscriptions_id_key" ON "subscriptions"("id");
 
 -- AddForeignKey
 ALTER TABLE "video_posts" ADD CONSTRAINT "video_posts_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE CASCADE ON UPDATE CASCADE;

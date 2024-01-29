@@ -6,6 +6,7 @@ export interface User {
   avatar?: string;
   publicationsCount: number;
   subscribersCount: number;
+  createdAt?: Date;
 }
 
 export interface AuthUser extends User {

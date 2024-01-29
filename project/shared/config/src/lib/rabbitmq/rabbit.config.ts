@@ -5,18 +5,18 @@ const DEFAULT_RABBIT_PORT = 5672;
 
 export interface RabbitConfig {
   host: string;
+  port: number;
+  username: string;
   password: string;
-  user: string;
   queue: string;
   exchange: string;
-  port: number;
 }
 
 const validationSchema = Joi.object({
   host: Joi.string().valid().hostname().required(),
-  password: Joi.string().required(),
   port: Joi.number().port().default(DEFAULT_RABBIT_PORT),
-  user: Joi.string().required(),
+  username: Joi.string().required(),
+  password: Joi.string().required(),
   queue: Joi.string().required(),
   exchange: Joi.string().required(),
 });
@@ -30,12 +30,12 @@ function validateConfig(config: RabbitConfig): void {
 
 function getConfig(): RabbitConfig {
   const config: RabbitConfig = {
-    host: process.env.RABBIT_HOST!,
-    password: process.env.RABBIT_PASSWORD!,
-    port: parseInt(process.env.RABBIT_PORT!, 10) || DEFAULT_RABBIT_PORT,
-    user: process.env.RABBIT_USER!,
-    queue: process.env.RABBIT_QUEUE!,
-    exchange: process.env.RABBIT_EXCHANGE!,
+    host: process.env.RABBIT_HOST as string,
+    port: parseInt(process.env.RABBIT_PORT as string, 10),
+    username: process.env.RABBIT_USERNAME as string,
+    password: process.env.RABBIT_PASSWORD as string,
+    queue: process.env.RABBIT_QUEUE as string,
+    exchange: process.env.RABBIT_EXCHANGE as string,
   };
 
   validateConfig(config);

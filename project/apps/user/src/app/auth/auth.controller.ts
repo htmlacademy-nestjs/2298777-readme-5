@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   HttpStatus,
   Param,
   Post,
@@ -13,14 +14,22 @@ import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { fillDto } from '@project/shared/utils';
 import { UserRdo } from './rdo/user.rdo';
-import { LoginUserDto } from './dto/login-user.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { MongoIdValidationPipe } from '@project/shared/pipes';
 import { JWTAuthGuard } from './guards/jwt-auth.guard';
 import { Request } from 'express';
-import { TokenPayload } from '@project/shared/types';
+import { RabbitRouting, RequestWithTokenPayload, TokenPayload } from '@project/shared/types';
 import { NotifyService } from '../notify/notify.service';
+import { UserEntity } from '../user/user.entity';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { LoginUserRdo } from './rdo/login-user.rdo';
+import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
+
+interface RequestWithUser {
+  user?: UserEntity;
+}
 
 @ApiTags('auth')
 @Controller('auth')
@@ -58,11 +67,11 @@ export class AuthController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Invalid credentials',
   })
+  @UseGuards(LocalAuthGuard)
   @Post('login')
-  public async login(@Body() dto: LoginUserDto) {
-    const user = await this.authService.validateUser(dto);
-    const userToken = await this.authService.createUserToken(user);
-    return fillDto(UserRdo, { ...user.toPojo(), ...userToken });
+  public async login(@Req() { user }: RequestWithUser) {
+    const userToken = await this.authService.createUserToken(user!);
+    return fillDto(LoginUserRdo, { ...user?.toPojo(), ...userToken });
   }
 
   @ApiResponse({
@@ -92,5 +101,48 @@ export class AuthController {
     const tokenPayload = req.user as TokenPayload;
     const user = await this.authService.updatePassword(tokenPayload.id, dto);
     return fillDto(UserRdo, user.toPojo());
+  }
+
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Get new access token',
+  })
+  @UseGuards(JwtRefreshGuard)
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  public async refreshToken(@Req() { user }: RequestWithUser) {
+    return this.authService.createUserToken(user!);
+  }
+
+  @UseGuards(JWTAuthGuard)
+  @Post('check')
+  public async checkToken(@Req() { user: payload }: RequestWithTokenPayload) {
+    return payload;
+  }
+
+  @RabbitSubscribe({
+    exchange: 'readme.user.income',
+    routingKey: RabbitRouting.Subscribe,
+    queue: 'readme.user.income',
+  })
+  public async subscribe({
+    authorId,
+    userId,
+    method,
+  }: {
+    authorId: string;
+    userId: string;
+    method: string;
+  }) {
+    await this.authService.subscribeHandle(authorId, userId, method);
+  }
+
+  @RabbitSubscribe({
+    exchange: 'readme.user.income',
+    routingKey: RabbitRouting.Post,
+    queue: 'readme.user.income',
+  })
+  public async post({ authorId, method }: { authorId: string; method: string }) {
+    await this.authService.postHandle(authorId, method);
   }
 }
