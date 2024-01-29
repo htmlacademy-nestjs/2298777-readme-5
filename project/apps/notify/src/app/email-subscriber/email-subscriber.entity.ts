@@ -6,12 +6,14 @@ export class EmailSubscriberEntity implements Subscriber, Entity<string> {
   public email: string;
   public firstName: string;
   public lastName: string;
+  public isActive?: boolean;
 
   constructor(subscriber: Subscriber) {
     this.id = subscriber.id;
     this.email = subscriber.email;
     this.firstName = subscriber.firstName;
     this.lastName = subscriber.lastName;
+    this.isActive = subscriber.isActive;
   }
 
   public toPojo() {
@@ -20,6 +22,7 @@ export class EmailSubscriberEntity implements Subscriber, Entity<string> {
       email: this.email,
       firstName: this.firstName,
       lastName: this.lastName,
+      isActive: this.isActive,
     };
   }
 

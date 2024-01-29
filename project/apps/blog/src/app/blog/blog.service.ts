@@ -49,8 +49,7 @@ export class BlogService {
       tags: setTags,
     });
     const postEntity = this.createPostEntity(post);
-    console.log(basePost);
-    console.log(postEntity);
+
     const result = await this.postRepository.save(basePost, postEntity, post.type);
 
     this.rabbitClient.publish('readme.user.income', RabbitRouting.Post, {
@@ -63,6 +62,9 @@ export class BlogService {
 
   public async likeHandle(postId: string, userId: string) {
     const post = await this.postRepository.findById(postId);
+    if (post?.status === 'draft') {
+      throw new BadRequestException('You can not like draft post');
+    }
     if (!post) {
       throw new BadRequestException('Post not found');
     }
@@ -166,6 +168,9 @@ export class BlogService {
     const post = await this.postRepository.findById(postId);
     if (!post) {
       throw new BadRequestException('Post not found');
+    }
+    if (post.authorId === userId) {
+      throw new BadRequestException('You can not repost your own post or repost twice');
     }
     const repost = new BasePostEntity({
       tags: post.tags,

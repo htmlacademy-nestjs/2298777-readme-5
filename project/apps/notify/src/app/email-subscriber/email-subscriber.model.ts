@@ -25,6 +25,11 @@ export class EmailSubscriberModel extends Document implements Subscriber {
   public lastName: string;
 
   public id?: string;
+
+  @Prop({
+    default: false,
+  })
+  public isActive?: boolean;
 }
 
 export const EmailSubscriberSchema = SchemaFactory.createForClass(EmailSubscriberModel);

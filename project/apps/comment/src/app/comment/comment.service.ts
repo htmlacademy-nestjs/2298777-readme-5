@@ -23,6 +23,9 @@ export class CommentService {
   }
 
   public async createComment(comment: CreateCommentDto) {
+    if (comment.text.length > 300 || comment.text.length < 10) {
+      throw new BadRequestException('Comment length must be between 10 and 300 characters');
+    }
     const commentEntity = new CommentEntity({
       ...comment,
       createdAt: new Date(),

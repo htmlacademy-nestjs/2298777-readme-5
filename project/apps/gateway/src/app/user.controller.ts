@@ -17,6 +17,7 @@ import { Request } from 'express';
 import { AxiosExceptionFilter } from './filters/axios-exception.filter';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @ApiTags('auth')
 @UseFilters(AxiosExceptionFilter)
@@ -84,6 +85,20 @@ export class UserController {
         Authorization: req.headers['authorization'],
       },
     });
+    return data;
+  }
+
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'User has been successfully registered',
+  })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: 'User with this email already exists',
+  })
+  @Post('register')
+  public async register(@Body() body: CreateUserDto) {
+    const { data } = await this.httpService.axiosRef.post(`${AppServiceURL.User}/register`, body);
     return data;
   }
 }

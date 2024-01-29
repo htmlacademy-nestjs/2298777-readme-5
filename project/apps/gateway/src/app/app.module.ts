@@ -8,6 +8,7 @@ import { FileController } from './file.controller';
 import { CommentController } from './comment.controller';
 import { ConfigGatewayModule } from '@project/shared/config';
 import { SubscribeController } from './subscribe.controller';
+import { NotifyController } from './notify.controller';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SubscribeController } from './subscribe.controller';
     FileController,
     CommentController,
     SubscribeController,
+    NotifyController,
   ],
   providers: [CheckAuthGuard],
 })

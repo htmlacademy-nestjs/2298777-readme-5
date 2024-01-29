@@ -3,4 +3,5 @@ export enum RabbitRouting {
   Comment = 'comment.Comment',
   Post = 'post.Post',
   Subscribe = 'subscribe.Subscribe',
+  NotifyPost = 'notify.post',
 }

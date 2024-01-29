@@ -4,6 +4,7 @@ export enum AppServiceURL {
   File = 'http://localhost:3003/api/file',
   Comment = 'http://localhost:3002/api/comment',
   Subscribe = 'http://localhost:3001/api/subscribe',
+  Notify = 'http://localhost:3005/api/notify',
 }
 
 export const HTTP_CLIENT_MAX_REDIRECTS = 5;

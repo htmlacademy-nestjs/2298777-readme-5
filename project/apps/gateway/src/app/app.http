@@ -2,7 +2,7 @@ POST http://localhost:3006/api/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "cbvd@gmail.com",
+  "email": "mmm@gmail.com",
   "password": "123456"
 }
 
@@ -14,7 +14,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YWU4ODQ4N
 ###
 
 POST http://localhost:3006/api/blog/quote
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMyNzIyMDk0OWIzMjRjNTg4MWU1MCIsImVtYWlsIjoiY2J2ZEBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJib2duYSIsImxhc3ROYW1lIjoiYm9nbmEiLCJhdmF0YXIiOiIiLCJpYXQiOjE3MDY0NTc0OTgsImV4cCI6MTcwNjU0Mzg5OH0.CaViRPBtt956aG5ndVarSQpC0ct_zMPhXxBzAILKA4s
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YjdkOTMzNzUxMDE0NGYxYzNiMWNmNSIsImVtYWlsIjoibW1tQGdtYWlsLmNvbSIsImZpcnN0TmFtZSI6Im1tbSIsImxhc3ROYW1lIjoibW1tIiwiYXZhdGFyIjoiIiwiaWF0IjoxNzA2NTUwMzg1LCJleHAiOjE3MDY2MzY3ODV9.IDGKeVySs01ZLsx_d4ngPE_soCPo-8kM_4Tskfv42-o
 Content-Type: application/json
 
 {
@@ -112,11 +112,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMxNDAwO
 ###
 
 POST http://localhost:3006/api/subscribe  HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWMyNzIyMDk0OWIzMjRjNTg4MWU1MCIsImVtYWlsIjoiY2J2ZEBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJib2duYSIsImxhc3ROYW1lIjoiYm9nbmEiLCJhdmF0YXIiOiIiLCJpYXQiOjE3MDY0NDEzNTAsImV4cCI6MTcwNjUyNzc1MH0.VAIJQDnhgh8Oq7YG7n8SZuQOidaKtdBi66B31dqBJqY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YjdkOTcxNzUxMDE0NGYxYzNiMWNmYSIsImVtYWlsIjoibW1tbUBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJtbW0iLCJsYXN0TmFtZSI6Im1tbSIsImF2YXRhciI6IiIsImlhdCI6MTcwNjU0NzU2OSwiZXhwIjoxNzA2NjMzOTY5fQ.GnygnjiQCSIjQWqmbYoxG7lYZZosdLq9rTu7oYfUYdI
 Content-Type: application/json
 
 {
-  "authorId": "659c14009d0fb85ff6cc932d"
+  "authorId": "65b7d9717510144f1c3b1cfa"
 }
 
 ###
@@ -131,3 +131,20 @@ GET http://localhost:3006/api/blog/?next=0&quantity=20&filter=popular HTTP/1.1
 ###
 
 GET http://localhost:3006/api/blog/search/?words[]=Text&words[]=Video&next=0&quantity=10 HTTP/1.1
+
+###
+
+POST http://localhost:3006/api/notify/activate HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1YjdkOTcxNzUxMDE0NGYxYzNiMWNmYSIsImVtYWlsIjoibW1tbUBnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJtbW0iLCJsYXN0TmFtZSI6Im1tbSIsImF2YXRhciI6IiIsImlhdCI6MTcwNjU0NzU2OSwiZXhwIjoxNzA2NjMzOTY5fQ.GnygnjiQCSIjQWqmbYoxG7lYZZosdLq9rTu7oYfUYdI
+
+###
+
+POST http://localhost:3006/api/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "mmmm@gmail.com",
+  "firstName": "mmm",
+  "lastName": "mmm",
+  "password": "123456"
+}

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Inject,
   Injectable,
@@ -35,6 +36,8 @@ export class AuthService {
 
   public async register(dto: CreateUserDto) {
     const { email, password, firstName, lastName } = dto;
+
+    this.validateRegistrationData(dto);
 
     const user: AuthUser = {
       email,
@@ -83,6 +86,10 @@ export class AuthService {
 
   public async updatePassword(id: string, dto: UpdatePasswordDto) {
     const { oldPassword, newPassword } = dto;
+
+    if (newPassword.length < 6 || newPassword.length > 12) {
+      throw new BadRequestException('new password is too short or too long');
+    }
 
     const user = await this.userRepository.findById(id);
 
@@ -154,5 +161,28 @@ export class AuthService {
     }
 
     return this.userRepository.updateById(userId, user);
+  }
+
+  private validateRegistrationData(dto: CreateUserDto) {
+    const { password, firstName, lastName } = dto;
+
+    const validationErrors: string[] = [];
+
+    if (firstName.length < 3 || lastName.length < 3) {
+      validationErrors.push('First name or last name is too short');
+    }
+    if (firstName.length > 50 || lastName.length > 50) {
+      validationErrors.push('First name or last name is too long');
+    }
+    if (password.length < 6) {
+      validationErrors.push('Password is too short');
+    }
+    if (password.length > 12) {
+      validationErrors.push('Password is too long');
+    }
+
+    if (validationErrors.length) {
+      throw new BadRequestException(validationErrors);
+    }
   }
 }

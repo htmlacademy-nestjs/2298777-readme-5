@@ -46,6 +46,23 @@ export class BlogController {
       ...post,
       authorId: req.user!.id,
     });
+    const subscribers = await this.httpService.axiosRef.get(
+      `${AppServiceURL.Subscribe}/subscribers/${req.user!.id}`
+    );
+    const subscribersIds = subscribers.data.map((subscriber: Subscribe) => subscriber.userId);
+
+    subscribersIds.forEach(async (id: string) => {
+      const user = await this.httpService.axiosRef.get(`${AppServiceURL.User}/${id}`, {
+        headers: {
+          Authorization: req.headers['authorization'],
+        },
+      });
+      this.httpService.axiosRef.post(`${AppServiceURL.Notify}/post`, {
+        email: user.data.email,
+        authorEmail: req.user!.email,
+      });
+    });
+
     return data;
   }
 
