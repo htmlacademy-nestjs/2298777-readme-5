@@ -24,6 +24,7 @@ import { PostType, RabbitRouting } from '@project/shared/types';
 import { ResultPostEntity } from '../post/entities/result-post.entity';
 import { LikeEntity } from '../like/like.entity';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { MAX_TAGS_COUNT, TAG_MAX_LENGTH, TAG_MIN_LENGTH } from './blog.const';
 
 @Injectable()
 export class BlogService {
@@ -211,7 +212,7 @@ export class BlogService {
   private checkTags(tags: string[]) {
     const lowercaseTags = tags.map((tag) => tag.toLowerCase());
     const setTags = [...new Set(lowercaseTags)].filter((tag) => {
-      if (tag.length < 3 || tag.length > 10) {
+      if (tag.length < TAG_MIN_LENGTH || tag.length > TAG_MAX_LENGTH) {
         throw new BadRequestException('Tag length must be between 3 and 10');
       }
       if (tag.split(' ').length > 1) {
@@ -219,7 +220,7 @@ export class BlogService {
       }
       return true;
     });
-    if (setTags && setTags.length > 8) {
+    if (setTags && setTags.length > MAX_TAGS_COUNT) {
       throw new BadRequestException('Too many tags');
     }
     return setTags;

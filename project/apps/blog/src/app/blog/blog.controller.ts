@@ -21,6 +21,7 @@ import { DEFAULT_FETCHED_POSTS, DEFAULT_FETCHED_SEARCH_POSTS } from './blog.cons
 import { PostDto } from './blog.types';
 import { Request } from 'express';
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
+import { MongoIdValidationPipe } from '@project/shared/pipes';
 
 @ApiTags('blog')
 @Controller('blog')

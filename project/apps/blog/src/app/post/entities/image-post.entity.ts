@@ -7,12 +7,6 @@ export class ImagePostEntity implements ImagePost {
     this.imageUrl = post.imageUrl;
   }
 
-  public toPojo() {
-    return {
-      imageUrl: this.imageUrl,
-    };
-  }
-
   static fromObject(obj: ImagePost) {
     return new ImagePostEntity(obj);
   }

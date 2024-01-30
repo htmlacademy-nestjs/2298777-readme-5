@@ -9,13 +9,6 @@ export class QuotePostEntity implements QuotePost {
     this.quoteAuthor = post.quoteAuthor;
   }
 
-  public toPojo() {
-    return {
-      quote: this.quote,
-      quoteAuthor: this.quoteAuthor,
-    };
-  }
-
   static fromObject(post: QuotePost) {
     return new QuotePostEntity(post);
   }

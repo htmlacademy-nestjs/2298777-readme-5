@@ -20,6 +20,12 @@ import { ConfigType } from '@nestjs/config';
 import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { createJwtPayload } from '@project/shared/utils';
 import * as crypto from 'node:crypto';
+import {
+  MAX_NAME_LENGTH,
+  MAX_PASSWORD_LENGTH,
+  MIN_NAME_LENGTH,
+  MIN_PASSWORD_LENGTH,
+} from './auth.constant';
 
 @Injectable()
 export class AuthService {
@@ -168,16 +174,16 @@ export class AuthService {
 
     const validationErrors: string[] = [];
 
-    if (firstName.length < 3 || lastName.length < 3) {
+    if (firstName.length < MIN_NAME_LENGTH || lastName.length < MIN_NAME_LENGTH) {
       validationErrors.push('First name or last name is too short');
     }
-    if (firstName.length > 50 || lastName.length > 50) {
+    if (firstName.length > MAX_NAME_LENGTH || lastName.length > MAX_NAME_LENGTH) {
       validationErrors.push('First name or last name is too long');
     }
-    if (password.length < 6) {
+    if (password.length < MIN_PASSWORD_LENGTH) {
       validationErrors.push('Password is too short');
     }
-    if (password.length > 12) {
+    if (password.length > MAX_PASSWORD_LENGTH) {
       validationErrors.push('Password is too long');
     }
 

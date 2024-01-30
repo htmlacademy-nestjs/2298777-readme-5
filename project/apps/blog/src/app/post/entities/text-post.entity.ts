@@ -11,14 +11,6 @@ export class TextPostEntity implements TextPost {
     this.text = post.text;
   }
 
-  public toPojo() {
-    return {
-      name: this.name,
-      anonsText: this.anonsText,
-      text: this.text,
-    };
-  }
-
   static fromObject(post: TextPost) {
     return new TextPostEntity(post);
   }

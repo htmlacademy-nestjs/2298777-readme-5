@@ -9,13 +9,6 @@ export class VideoPostEntity implements VideoPost {
     this.videoUrl = post.videoUrl;
   }
 
-  public toPojo() {
-    return {
-      name: this.name,
-      videoUrl: this.videoUrl,
-    };
-  }
-
   static fromObject(post: VideoPost) {
     return new VideoPostEntity(post);
   }

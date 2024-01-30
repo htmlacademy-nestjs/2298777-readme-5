@@ -6,6 +6,7 @@ import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { ConfigType } from '@nestjs/config';
 import { rabbitConfig } from '@project/shared/config';
 import { RabbitRouting } from '@project/shared/types';
+import { MAX_COMMENT_LENGTH, MIN_COMMENT_LENGTH } from './comment.constant';
 
 @Injectable()
 export class CommentService {
@@ -23,8 +24,10 @@ export class CommentService {
   }
 
   public async createComment(comment: CreateCommentDto) {
-    if (comment.text.length > 300 || comment.text.length < 10) {
-      throw new BadRequestException('Comment length must be between 10 and 300 characters');
+    if (comment.text.length > MAX_COMMENT_LENGTH || comment.text.length < MIN_COMMENT_LENGTH) {
+      throw new BadRequestException(
+        `Comment length must be between ${MIN_COMMENT_LENGTH} and ${MAX_COMMENT_LENGTH} characters`
+      );
     }
     const commentEntity = new CommentEntity({
       ...comment,

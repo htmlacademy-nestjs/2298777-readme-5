@@ -9,13 +9,6 @@ export class LinkPostEntity implements LinkPost {
     this.description = post.description;
   }
 
-  public toPojo() {
-    return {
-      linkUrl: this.linkUrl,
-      description: this.description,
-    };
-  }
-
   static fromObject(post: LinkPost) {
     return new LinkPostEntity(post);
   }
