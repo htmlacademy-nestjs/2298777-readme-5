@@ -1,4 +1,4 @@
-GET http://localhost:3001/api/blog/?tags[]=tag3 HTTP/1.1
+GET http://localhost:3001/api/blog HTTP/1.1
 
 ###
 
@@ -98,4 +98,4 @@ GET http://localhost:3001/api/blog/subscribed/?authorIds[]=0&authorIds[]=5f0b5b9
 
 ###
 
-GET http://localhost:3001/api/blog/search/?words[]=text HTTP/1.1
+GET http://localhost:3001/api/blog/search/?words[]=Title HTTP/1.1
